@@ -12,7 +12,7 @@
 
 <meta name="date" content="2024-12-02" />
 
-<title>data_preparation</title>
+<title>report</title>
 
 <script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -272,13 +272,15 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">data_preparation</h1>
+<h1 class="title toc-ignore">report</h1>
 <h4 class="date">2024-12-02</h4>
 
 </div>
 
 
-<pre class="r"><code>library(rvest)
+<pre class="r"><code>knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+library(rvest)
 library(dplyr)
 library(tidyverse)
 library(httr)
@@ -286,7 +288,33 @@ library(ggplot2)
 library(tidyr)
 library(maps)
 library(knitr)
-library(viridis)</code></pre>
+library(viridis)
+
+theme_set(theme_minimal() + theme(legend.position = &quot;right&quot;))
+
+options(
+  ggplot2.continuous.colour = &quot;viridis&quot;,
+  ggplot2.continuous.fill = &quot;viridis&quot;
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d</code></pre>
+<p><strong>Project Name:</strong> <em>Play by Numbers: Esports Trends
+Unveiled</em></p>
+<p><strong>Project Members:</strong> Xun Sun (xs2569), Xinghao Qiao
+(xq2241), Huachen Shan (hs3478), Kanye Xu (kx2224), Fangchi Lu
+(fl2714)</p>
+<div id="motivation" class="section level2">
+<h2>Motivation</h2>
+<p>This project aims to analyze the evolving landscape of e-sports,
+focusing on patterns in player earnings and engagement strategies across
+demographics and game types.</p>
+</div>
+<div id="research-questions" class="section level2">
+<h2>Research Questions</h2>
+</div>
+<div id="data-wrangling" class="section level2">
+<h2>Data Wrangling</h2>
 <p>Access the top 100 players with Highest Overall Earnings</p>
 <pre class="r"><code># esports_earnings_top100_overall
 url &lt;- &#39;https://www.esportsearnings.com/players&#39;
@@ -563,6 +591,23 @@ head(all_data)</code></pre>
 ## 5  1683 Players   136 Tournaments 2018
 ## 6   662 Players    29 Tournaments 2018</code></pre>
 <pre class="r"><code>write.csv(all_data, &quot;Earnings_topgame_2018_2024.csv&quot;, row.names = FALSE)</code></pre>
+</div>
+<div id="exploratory-analysis" class="section level2">
+<h2>Exploratory Analysis</h2>
+<pre class="r"><code># Data import
+
+country_overall &lt;- read.csv(&quot;country_overall.csv&quot;)
+esports_top100 &lt;- read.csv(&quot;esports_earnings_top100_overall.csv&quot;)
+top500_365 &lt;- read.csv(&quot;top500_365.csv&quot;)
+earnings_country &lt;- read.csv(&quot;Earnings_country_2018_2024.csv&quot;)
+earnings_topgame &lt;- read.csv(&quot;Earnings_topgame_2018_2024.csv&quot;)
+
+country_overall$Total_Earnings &lt;- as.numeric(gsub(&quot;[\\$,]&quot;, &quot;&quot;, country_overall$Total_Earnings))
+esports_top100$Total_Earnings &lt;- as.numeric(gsub(&quot;[\\$,]&quot;, &quot;&quot;, esports_top100$Total_Earnings))
+top500_365$`Total..Last.365.Days.` &lt;- as.numeric(gsub(&quot;[\\$,]&quot;, &quot;&quot;, top500_365$`Total..Last.365.Days.`))
+earnings_country$Overall_Earnings &lt;- as.numeric(gsub(&quot;[\\$,]&quot;, &quot;&quot;, earnings_country$Overall_Earnings))
+earnings_topgame$Total_Earnings &lt;- as.numeric(gsub(&quot;[\\$,]&quot;, &quot;&quot;, earnings_topgame$Total_Earnings))</code></pre>
+</div>
 
 
 

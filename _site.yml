@@ -1,0 +1,13 @@
+name: "P8105 Final Project: E-sport analysis"
+output_dir: "."
+navbar:
+  title: "Home"
+  right:
+    - text: "About"
+      href: about.html
+    - icon: fa-envelope fa-lg
+      href: mailto:<kx2224@cumc.columbia.edu>
+    - icon: fa-github fa-lg
+      href: http://github.com/KanyeXuSelf/
+output:
+  html_document

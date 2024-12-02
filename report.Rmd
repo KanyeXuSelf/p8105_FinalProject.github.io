@@ -1,12 +1,9 @@
 ---
-title: "report"
+
+title: "Esport Report"
 date: "2024-12-02"
-output:
-  github_document:
-    toc: true
-    toc_float: true
-    theme: sandstone
-    code_folding: hide
+output: github_document
+
 ---
 
 ```{r, warning = FALSE, message = FALSE}
@@ -78,7 +75,7 @@ data_overall <- data.frame(
 
 data_overall$Rank <- as.numeric(gsub("\\.", "", data_overall$Rank))
 head(data_overall)
-write.csv(data_overall, "esports_earnings_top100_overall.csv", row.names = FALSE)
+write.csv(data_overall, "data/esports_earnings_top100_overall.csv", row.names = FALSE)
 
 ```
 
@@ -125,7 +122,7 @@ data <- data %>%
   mutate(average_earning_per_player = Total_Earnings / Number_of_Players)
 
 head(data)
-write.csv(data, "country_overall.csv", row.names = FALSE)
+write.csv(data, "data/country_overall.csv", row.names = FALSE)
 
 ```
 
@@ -165,7 +162,7 @@ fetch_tables <- function(url) {
 all_data <- lapply(urls, fetch_tables)
 final_table <- bind_rows(all_data)
 head(final_table)
-write.csv(final_table, "top500_365.csv", row.names = FALSE)
+write.csv(final_table, "data/top500_365.csv", row.names = FALSE)
 
 ```
 
@@ -218,7 +215,7 @@ all_data$Current_year_Ranking <- as.numeric(gsub("\\.", "", all_data$Current_yea
 
 head(all_data, 10)
 
-write.csv(all_data, "Earnings_country_2018_2024.csv", row.names = FALSE)
+write.csv(all_data, "data/Earnings_country_2018_2024.csv", row.names = FALSE)
 
 ```
 
@@ -266,7 +263,7 @@ all_data <- all_data[, 1:6]
 colnames(all_data) <- c("Current_year_Rank", "Game", "Total_Earnings", "Total_Players", "Total_Tournaments", "Year")
 all_data$Current_year_Rank <- as.numeric(gsub("\\.", "", all_data$Current_year_Rank))
 head(all_data)
-write.csv(all_data, "Earnings_topgame_2018_2024.csv", row.names = FALSE)
+write.csv(all_data, "data/Earnings_topgame_2018_2024.csv", row.names = FALSE)
 
 ```
 
@@ -276,11 +273,11 @@ write.csv(all_data, "Earnings_topgame_2018_2024.csv", row.names = FALSE)
 
 # Data import
 
-country_overall <- read.csv("country_overall.csv")
-esports_top100 <- read.csv("esports_earnings_top100_overall.csv")
-top500_365 <- read.csv("top500_365.csv")
-earnings_country <- read.csv("Earnings_country_2018_2024.csv")
-earnings_topgame <- read.csv("Earnings_topgame_2018_2024.csv")
+country_overall <- read.csv("data/country_overall.csv")
+esports_top100 <- read.csv("data/esports_earnings_top100_overall.csv")
+top500_365 <- read.csv("data/top500_365.csv")
+earnings_country <- read.csv("data/Earnings_country_2018_2024.csv")
+earnings_topgame <- read.csv("data/Earnings_topgame_2018_2024.csv")
 
 country_overall$Total_Earnings <- as.numeric(gsub("[\\$,]", "", country_overall$Total_Earnings))
 esports_top100$Total_Earnings <- as.numeric(gsub("[\\$,]", "", esports_top100$Total_Earnings))

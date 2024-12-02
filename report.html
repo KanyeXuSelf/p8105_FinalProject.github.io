@@ -10,9 +10,8 @@
 
 
 
-<meta name="date" content="2024-12-02" />
 
-<title>report</title>
+<title>report.knit</title>
 
 <script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -272,12 +271,13 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">report</h1>
-<h4 class="date">2024-12-02</h4>
 
 </div>
 
 
+<hr />
+<p>title: “Esport Report” date: “2024-12-02” output: github_document</p>
+<hr />
 <pre class="r"><code>knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 library(rvest)
@@ -357,7 +357,7 @@ head(data_overall)</code></pre>
 ## 4       $5,945,842.73          100.00%
 ## 5       $5,898,810.60          100.00%
 ## 6       $5,857,271.49          100.00%</code></pre>
-<pre class="r"><code>write.csv(data_overall, &quot;esports_earnings_top100_overall.csv&quot;, row.names = FALSE)</code></pre>
+<pre class="r"><code>write.csv(data_overall, &quot;data/esports_earnings_top100_overall.csv&quot;, row.names = FALSE)</code></pre>
 <p>Access the top countries of players in esports who won prize money
 based on information published on the internet</p>
 <pre class="r"><code>url &lt;- &#39;https://www.esportsearnings.com/countries&#39;
@@ -404,7 +404,7 @@ head(data)</code></pre>
 ## 2    2      United States      287352963             28021
 ## 3    3              Korea      151388322              5882
 ## 4    4 Russian Federation       87641168              5485
-## 5    5             Brazil       67019128              5482
+## 5    5             Brazil       67023028              5482
 ## 6    6            Denmark       61387735              2124
 ##                           Top_Game Earnings_From_Top_Game Percent_From_Top_Game
 ## 1                           Dota 2         $85,737,773.44                26.87%
@@ -418,9 +418,9 @@ head(data)</code></pre>
 ## 2                   10254.91
 ## 3                   25737.56
 ## 4                   15978.34
-## 5                   12225.31
+## 5                   12226.02
 ## 6                   28901.95</code></pre>
-<pre class="r"><code>write.csv(data, &quot;country_overall.csv&quot;, row.names = FALSE)</code></pre>
+<pre class="r"><code>write.csv(data, &quot;data/country_overall.csv&quot;, row.names = FALSE)</code></pre>
 <p>Access the top 500 e-sports’ player earning from specific game in the
 past 365 days</p>
 <pre class="r"><code>urls &lt;- c(
@@ -465,7 +465,7 @@ head(final_table)</code></pre>
 ## 6     6 Cat         Chen, Zhengzhe… $945,311.10            Arena of Valor       
 ## # ℹ abbreviated name: ¹​`Total (Last 365 Days)`
 ## # ℹ 3 more variables: `Total (Game)` &lt;chr&gt;, `% of Total` &lt;chr&gt;, Country &lt;chr&gt;</code></pre>
-<pre class="r"><code>write.csv(final_table, &quot;top500_365.csv&quot;, row.names = FALSE)</code></pre>
+<pre class="r"><code>write.csv(final_table, &quot;data/top500_365.csv&quot;, row.names = FALSE)</code></pre>
 <p>Additionally, we found the data in the horizontal time dimension
 (from 2018 to 2024),</p>
 <pre class="r"><code>all_data &lt;- data.frame(
@@ -534,7 +534,7 @@ head(all_data, 10)</code></pre>
 ## 8        901 Players
 ## 9        783 Players
 ## 10       908 Players</code></pre>
-<pre class="r"><code>write.csv(all_data, &quot;Earnings_country_2018_2024.csv&quot;, row.names = FALSE)</code></pre>
+<pre class="r"><code>write.csv(all_data, &quot;data/Earnings_country_2018_2024.csv&quot;, row.names = FALSE)</code></pre>
 <p>Also, we access data about top games from 2018 to 2024,</p>
 <pre class="r"><code>all_data &lt;- data.frame(
   Year = integer(),
@@ -590,17 +590,17 @@ head(all_data)</code></pre>
 ## 4  1978 Players   196 Tournaments 2018
 ## 5  1683 Players   136 Tournaments 2018
 ## 6   662 Players    29 Tournaments 2018</code></pre>
-<pre class="r"><code>write.csv(all_data, &quot;Earnings_topgame_2018_2024.csv&quot;, row.names = FALSE)</code></pre>
+<pre class="r"><code>write.csv(all_data, &quot;data/Earnings_topgame_2018_2024.csv&quot;, row.names = FALSE)</code></pre>
 </div>
 <div id="exploratory-analysis" class="section level2">
 <h2>Exploratory Analysis</h2>
 <pre class="r"><code># Data import
 
-country_overall &lt;- read.csv(&quot;country_overall.csv&quot;)
-esports_top100 &lt;- read.csv(&quot;esports_earnings_top100_overall.csv&quot;)
-top500_365 &lt;- read.csv(&quot;top500_365.csv&quot;)
-earnings_country &lt;- read.csv(&quot;Earnings_country_2018_2024.csv&quot;)
-earnings_topgame &lt;- read.csv(&quot;Earnings_topgame_2018_2024.csv&quot;)
+country_overall &lt;- read.csv(&quot;data/country_overall.csv&quot;)
+esports_top100 &lt;- read.csv(&quot;data/esports_earnings_top100_overall.csv&quot;)
+top500_365 &lt;- read.csv(&quot;data/top500_365.csv&quot;)
+earnings_country &lt;- read.csv(&quot;data/Earnings_country_2018_2024.csv&quot;)
+earnings_topgame &lt;- read.csv(&quot;data/Earnings_topgame_2018_2024.csv&quot;)
 
 country_overall$Total_Earnings &lt;- as.numeric(gsub(&quot;[\\$,]&quot;, &quot;&quot;, country_overall$Total_Earnings))
 esports_top100$Total_Earnings &lt;- as.numeric(gsub(&quot;[\\$,]&quot;, &quot;&quot;, esports_top100$Total_Earnings))

@@ -1,0 +1,244 @@
+---
+title: "data_preparation"
+date: "2024-12-02"
+output: html_document
+---
+
+```{r, warning = FALSE, message = FALSE}
+
+library(rvest)
+library(dplyr)
+library(tidyverse)
+library(httr)
+library(ggplot2)
+library(tidyr)
+library(maps)
+library(knitr)
+library(viridis)
+
+```
+
+Access the top 100 players with Highest Overall Earnings
+
+```{r}
+
+# esports_earnings_top100_overall
+url <- 'https://www.esportsearnings.com/players'
+webpage <- read_html(url)
+
+rank <- webpage %>% html_nodes("tr td:nth-child(1)") %>% html_text(trim = TRUE)
+player_id <- webpage %>% html_nodes("tr td:nth-child(2)") %>% html_text(trim = TRUE)
+player_name <- webpage %>% html_nodes("tr td:nth-child(3)") %>% html_text(trim = TRUE)
+total_earnings <- webpage %>% html_nodes("tr td:nth-child(4)") %>% html_text(trim = TRUE)
+highest_paying_game <- webpage %>% html_nodes("tr td:nth-child(5)") %>% html_text(trim = TRUE)
+total_game_earnings <- webpage %>% html_nodes("tr td:nth-child(6)") %>% html_text(trim = TRUE)
+percent_of_total <- webpage %>% html_nodes("tr td:nth-child(7)") %>% html_text(trim = TRUE)
+
+
+data_overall <- data.frame(
+  Rank = rank,
+  Player_ID = player_id,
+  Player_Name = player_name,
+  Total_Earnings = total_earnings,
+  Highest_Paying_Game = highest_paying_game,
+  Total_Game_Earnings = total_game_earnings,
+  Percent_of_Total = percent_of_total,
+  stringsAsFactors = FALSE
+)
+
+
+data_overall$Rank <- as.numeric(gsub("\\.", "", data_overall$Rank))
+head(data_overall)
+write.csv(data_overall, "esports_earnings_top100_overall.csv", row.names = FALSE)
+
+```
+
+Access the top countries of players in esports who won prize money based on information published on the internet
+
+```{r}
+
+url <- 'https://www.esportsearnings.com/countries'
+webpage <- read_html(url)
+
+rows <- webpage %>% html_nodes("tr")
+
+data <- data.frame(
+  Rank = character(),
+  Country = character(),
+  Total_Earnings = character(),
+  Number_of_Players = character(),
+  Top_Game = character(),
+  Earnings_From_Top_Game = character(),
+  Percent_From_Top_Game = character(),
+  stringsAsFactors = FALSE
+)
+
+for (row in rows) {
+  
+  columns <- row %>% html_nodes("td") %>% html_text(trim = TRUE)
+  if (length(columns) == 7) {
+    data <- bind_rows(data, as.data.frame(t(columns), stringsAsFactors = FALSE))
+  }
+}
+colnames(data) <- c("Rank", "Country", "Total_Earnings", "Number_of_Players", 
+                    "Top_Game", "Earnings_From_Top_Game", "Percent_From_Top_Game")
+
+data[, 1:7] <- data[, 8:14]
+colnames(data)[1:7] <- c("Rank", "Country", "Total_Earnings", "Number_of_Players", 
+                         "Top_Game", "Earnings_From_Top_Game", "Percent_From_Top_Game")
+
+data <- data[, 1:7]
+data$Rank <- as.numeric(gsub("\\.", "", data$Rank))
+data$Total_Earnings <- as.numeric(gsub("[^0-9\\.]", "", data$Total_Earnings))  
+data$Number_of_Players <- as.numeric(gsub("[^0-9]", "", data$Number_of_Players))
+
+data <- data %>%
+  mutate(average_earning_per_player = Total_Earnings / Number_of_Players)
+
+head(data)
+write.csv(data, "country_overall.csv", row.names = FALSE)
+
+```
+
+
+Access the top 500 e-sports’ player earning from specific game in the past 365 days
+
+```{r, warning = FALSE, message = FALSE}
+
+urls <- c(
+  "https://www.esportsearnings.com/players/highest-earnings-last-365-days",
+  "https://www.esportsearnings.com/players/highest-earnings-last-365-days-top-200",
+  "https://www.esportsearnings.com/players/highest-earnings-last-365-days-top-300",
+  "https://www.esportsearnings.com/players/highest-earnings-last-365-days-top-400",
+  "https://www.esportsearnings.com/players/highest-earnings-last-365-days-top-500"
+)
+
+fetch_tables <- function(url) {
+  webpage <- read_html(url)
+  tables <- webpage %>%
+    html_nodes("table.detail_list_table") %>%
+    lapply(html_table, fill = TRUE) %>%
+    bind_rows()  
+  
+  countries <- webpage %>%
+    html_nodes("table.detail_list_table img") %>%  
+    html_attr("title")                             
+  
+  if (length(countries) == nrow(tables)) {
+    tables$Country <- countries  
+  } else {
+    warning("Country count does not match table rows for URL: ", url)
+    tables$Country <- NA  
+  }
+  return(tables)
+}
+
+all_data <- lapply(urls, fetch_tables)
+final_table <- bind_rows(all_data)
+head(final_table)
+write.csv(final_table, "top500_365.csv", row.names = FALSE)
+
+```
+
+Additionally, we found the data in the horizontal time dimension (from 2018 to 2024),
+
+```{r}
+
+all_data <- data.frame(
+  Year = integer(),
+  Rank = character(),
+  Country = character(),
+  Total_Earnings = character(),
+  Number_of_Players = character(),
+  stringsAsFactors = FALSE
+)
+
+# from 2018 to 2024
+for (year in 2018:2024) {
+  
+  url <- paste0("https://www.esportsearnings.com/history/", year, "/countries")
+  webpage <- read_html(url)
+  rows <- webpage %>% html_nodes("tr")
+  data <- data.frame(
+    Rank = character(),
+    Country = character(),
+    Total_Earnings = character(),
+    Number_of_Players = character(),
+    stringsAsFactors = FALSE
+  )
+  
+  for (row in rows) {
+    # grab data
+    columns <- row %>% html_nodes("td") %>% html_text(trim = TRUE)
+    if (length(columns) == 4) {
+      data <- bind_rows(data, as.data.frame(t(columns), stringsAsFactors = FALSE))
+    }
+  }
+  data$Year <- year
+  all_data <- bind_rows(all_data, data)
+  
+}
+
+colnames(all_data) <- c("Rank", "Country", "Total_Earnings", "Number_of_Players", "Year")
+all_data$Year <- all_data$Rank
+all_data[, 1:4] <- all_data[, 6:9]
+
+all_data <- all_data[, c(5, 1:4)]
+colnames(all_data) <- c("Year", "Current_year_Ranking", "Countries", "Overall_Earnings", "Number_of_Players")
+all_data$Current_year_Ranking <- as.numeric(gsub("\\.", "", all_data$Current_year_Ranking))
+
+head(all_data, 10)
+
+write.csv(all_data, "Earnings_country_2018_2024.csv", row.names = FALSE)
+
+```
+
+Also, we access data about top games from 2018 to 2024,
+
+```{r}
+
+all_data <- data.frame(
+  Year = integer(),
+  Rank = integer(),
+  Game = character(),
+  Total_Earnings = character(),
+  Total_Players = character(),
+  Total_Tournaments = character(),
+  stringsAsFactors = FALSE
+)
+
+# 2018 to 2024
+for (year in 2018:2024) {
+  url <- paste0("https://www.esportsearnings.com/history/", year, "/games")
+  webpage <- read_html(url)
+  rows <- webpage %>% html_nodes("tr")
+  year_data <- data.frame(
+    Rank = integer(),
+    Game = character(),
+    Total_Earnings = character(),
+    Total_Players = character(),
+    Total_Tournaments = character(),
+    stringsAsFactors = FALSE
+  )
+  for (row in rows) {
+    columns <- row %>% html_nodes("td") %>% html_text(trim = TRUE)
+    if (length(columns) == 5) {
+      year_data <- bind_rows(year_data, as.data.frame(t(columns), stringsAsFactors = FALSE))
+    }
+  }
+  year_data$Year <- year
+  all_data <- bind_rows(all_data, year_data)
+}
+
+all_data[, 6] <- all_data[, 1]
+all_data[, 1:5] <- all_data[, 7:11]
+all_data <- all_data[, 1:6]
+
+colnames(all_data) <- c("Current_year_Rank", "Game", "Total_Earnings", "Total_Players", "Total_Tournaments", "Year")
+all_data$Current_year_Rank <- as.numeric(gsub("\\.", "", all_data$Current_year_Rank))
+head(all_data)
+write.csv(all_data, "Earnings_topgame_2018_2024.csv", row.names = FALSE)
+
+```
+
+

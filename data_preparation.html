@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2024-12-02" />
+
+<title>data_preparation</title>
+
+<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Home</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="mailto:&lt;kx2224@cumc.columbia.edu&gt;">
+    <span class="fa fa-envelope fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://github.com/KanyeXuSelf/">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">data_preparation</h1>
+<h4 class="date">2024-12-02</h4>
+
+</div>
+
+
+<pre class="r"><code>library(rvest)
+library(dplyr)
+library(tidyverse)
+library(httr)
+library(ggplot2)
+library(tidyr)
+library(maps)
+library(knitr)
+library(viridis)</code></pre>
+<p>Access the top 100 players with Highest Overall Earnings</p>
+<pre class="r"><code># esports_earnings_top100_overall
+url &lt;- &#39;https://www.esportsearnings.com/players&#39;
+webpage &lt;- read_html(url)
+
+rank &lt;- webpage %&gt;% html_nodes(&quot;tr td:nth-child(1)&quot;) %&gt;% html_text(trim = TRUE)
+player_id &lt;- webpage %&gt;% html_nodes(&quot;tr td:nth-child(2)&quot;) %&gt;% html_text(trim = TRUE)
+player_name &lt;- webpage %&gt;% html_nodes(&quot;tr td:nth-child(3)&quot;) %&gt;% html_text(trim = TRUE)
+total_earnings &lt;- webpage %&gt;% html_nodes(&quot;tr td:nth-child(4)&quot;) %&gt;% html_text(trim = TRUE)
+highest_paying_game &lt;- webpage %&gt;% html_nodes(&quot;tr td:nth-child(5)&quot;) %&gt;% html_text(trim = TRUE)
+total_game_earnings &lt;- webpage %&gt;% html_nodes(&quot;tr td:nth-child(6)&quot;) %&gt;% html_text(trim = TRUE)
+percent_of_total &lt;- webpage %&gt;% html_nodes(&quot;tr td:nth-child(7)&quot;) %&gt;% html_text(trim = TRUE)
+
+
+data_overall &lt;- data.frame(
+  Rank = rank,
+  Player_ID = player_id,
+  Player_Name = player_name,
+  Total_Earnings = total_earnings,
+  Highest_Paying_Game = highest_paying_game,
+  Total_Game_Earnings = total_game_earnings,
+  Percent_of_Total = percent_of_total,
+  stringsAsFactors = FALSE
+)
+
+
+data_overall$Rank &lt;- as.numeric(gsub(&quot;\\.&quot;, &quot;&quot;, data_overall$Rank))
+head(data_overall)</code></pre>
+<pre><code>##   Rank Player_ID         Player_Name Total_Earnings Highest_Paying_Game
+## 1    1    N0tail     Johan Sundstein  $7,184,163.05              Dota 2
+## 2    2     JerAx      Jesse Vainikka  $6,486,623.98              Dota 2
+## 3    3       ana        Anathan Pham  $6,024,411.96              Dota 2
+## 4    4       Ceb      Sébastien Debs  $5,945,842.73              Dota 2
+## 5    5    Topson Topias Taavitsainen  $5,898,810.60              Dota 2
+## 6    6  Miposhka   Yaroslav Naidenov  $5,857,271.49              Dota 2
+##   Total_Game_Earnings Percent_of_Total
+## 1       $7,172,436.83           99.84%
+## 2       $6,486,075.22           99.99%
+## 3       $6,024,411.96          100.00%
+## 4       $5,945,842.73          100.00%
+## 5       $5,898,810.60          100.00%
+## 6       $5,857,271.49          100.00%</code></pre>
+<pre class="r"><code>write.csv(data_overall, &quot;esports_earnings_top100_overall.csv&quot;, row.names = FALSE)</code></pre>
+<p>Access the top countries of players in esports who won prize money
+based on information published on the internet</p>
+<pre class="r"><code>url &lt;- &#39;https://www.esportsearnings.com/countries&#39;
+webpage &lt;- read_html(url)
+
+rows &lt;- webpage %&gt;% html_nodes(&quot;tr&quot;)
+
+data &lt;- data.frame(
+  Rank = character(),
+  Country = character(),
+  Total_Earnings = character(),
+  Number_of_Players = character(),
+  Top_Game = character(),
+  Earnings_From_Top_Game = character(),
+  Percent_From_Top_Game = character(),
+  stringsAsFactors = FALSE
+)
+
+for (row in rows) {
+  
+  columns &lt;- row %&gt;% html_nodes(&quot;td&quot;) %&gt;% html_text(trim = TRUE)
+  if (length(columns) == 7) {
+    data &lt;- bind_rows(data, as.data.frame(t(columns), stringsAsFactors = FALSE))
+  }
+}
+colnames(data) &lt;- c(&quot;Rank&quot;, &quot;Country&quot;, &quot;Total_Earnings&quot;, &quot;Number_of_Players&quot;, 
+                    &quot;Top_Game&quot;, &quot;Earnings_From_Top_Game&quot;, &quot;Percent_From_Top_Game&quot;)
+
+data[, 1:7] &lt;- data[, 8:14]
+colnames(data)[1:7] &lt;- c(&quot;Rank&quot;, &quot;Country&quot;, &quot;Total_Earnings&quot;, &quot;Number_of_Players&quot;, 
+                         &quot;Top_Game&quot;, &quot;Earnings_From_Top_Game&quot;, &quot;Percent_From_Top_Game&quot;)
+
+data &lt;- data[, 1:7]
+data$Rank &lt;- as.numeric(gsub(&quot;\\.&quot;, &quot;&quot;, data$Rank))
+data$Total_Earnings &lt;- as.numeric(gsub(&quot;[^0-9\\.]&quot;, &quot;&quot;, data$Total_Earnings))  
+data$Number_of_Players &lt;- as.numeric(gsub(&quot;[^0-9]&quot;, &quot;&quot;, data$Number_of_Players))
+
+data &lt;- data %&gt;%
+  mutate(average_earning_per_player = Total_Earnings / Number_of_Players)
+
+head(data)</code></pre>
+<pre><code>##   Rank            Country Total_Earnings Number_of_Players
+## 1    1              China      319027144              9009
+## 2    2      United States      287352963             28021
+## 3    3              Korea      151388322              5882
+## 4    4 Russian Federation       87641168              5485
+## 5    5             Brazil       67019128              5482
+## 6    6            Denmark       61387735              2124
+##                           Top_Game Earnings_From_Top_Game Percent_From_Top_Game
+## 1                           Dota 2         $85,737,773.44                26.87%
+## 2                         Fortnite         $49,472,179.53                17.22%
+## 3                League of Legends         $38,839,896.79                25.66%
+## 4                           Dota 2         $38,110,618.85                43.48%
+## 5                Rainbow Six Siege         $12,534,096.39                18.70%
+## 6 Counter-Strike: Global Offensive         $23,081,252.63                37.60%
+##   average_earning_per_player
+## 1                   35412.05
+## 2                   10254.91
+## 3                   25737.56
+## 4                   15978.34
+## 5                   12225.31
+## 6                   28901.95</code></pre>
+<pre class="r"><code>write.csv(data, &quot;country_overall.csv&quot;, row.names = FALSE)</code></pre>
+<p>Access the top 500 e-sports’ player earning from specific game in the
+past 365 days</p>
+<pre class="r"><code>urls &lt;- c(
+  &quot;https://www.esportsearnings.com/players/highest-earnings-last-365-days&quot;,
+  &quot;https://www.esportsearnings.com/players/highest-earnings-last-365-days-top-200&quot;,
+  &quot;https://www.esportsearnings.com/players/highest-earnings-last-365-days-top-300&quot;,
+  &quot;https://www.esportsearnings.com/players/highest-earnings-last-365-days-top-400&quot;,
+  &quot;https://www.esportsearnings.com/players/highest-earnings-last-365-days-top-500&quot;
+)
+
+fetch_tables &lt;- function(url) {
+  webpage &lt;- read_html(url)
+  tables &lt;- webpage %&gt;%
+    html_nodes(&quot;table.detail_list_table&quot;) %&gt;%
+    lapply(html_table, fill = TRUE) %&gt;%
+    bind_rows()  
+  
+  countries &lt;- webpage %&gt;%
+    html_nodes(&quot;table.detail_list_table img&quot;) %&gt;%  
+    html_attr(&quot;title&quot;)                             
+  
+  if (length(countries) == nrow(tables)) {
+    tables$Country &lt;- countries  
+  } else {
+    warning(&quot;Country count does not match table rows for URL: &quot;, url)
+    tables$Country &lt;- NA  
+  }
+  return(tables)
+}
+
+all_data &lt;- lapply(urls, fetch_tables)
+final_table &lt;- bind_rows(all_data)
+head(final_table)</code></pre>
+<pre><code>## # A tibble: 6 × 8
+##    ...1 `Player ID` `Player Name`   Total (Last 365 Days…¹ `Highest Paying Game`
+##   &lt;dbl&gt; &lt;chr&gt;       &lt;chr&gt;           &lt;chr&gt;                  &lt;chr&gt;                
+## 1     1 Yinuo       Xu, Bicheng     $1,340,592.07          Arena of Valor       
+## 2     2 CS          Xie, Chengjun   $1,147,734.93          Arena of Valor       
+## 3     2 XuanRan     Liu, Ming       $1,147,734.93          Arena of Valor       
+## 4     2 ZhongYi     Chen, Jiahao    $1,147,734.93          Arena of Valor       
+## 5     5 UMA         Wang Yuan-hao   $1,001,476.20          Street Fighter 6     
+## 6     6 Cat         Chen, Zhengzhe… $945,311.10            Arena of Valor       
+## # ℹ abbreviated name: ¹​`Total (Last 365 Days)`
+## # ℹ 3 more variables: `Total (Game)` &lt;chr&gt;, `% of Total` &lt;chr&gt;, Country &lt;chr&gt;</code></pre>
+<pre class="r"><code>write.csv(final_table, &quot;top500_365.csv&quot;, row.names = FALSE)</code></pre>
+<p>Additionally, we found the data in the horizontal time dimension
+(from 2018 to 2024),</p>
+<pre class="r"><code>all_data &lt;- data.frame(
+  Year = integer(),
+  Rank = character(),
+  Country = character(),
+  Total_Earnings = character(),
+  Number_of_Players = character(),
+  stringsAsFactors = FALSE
+)
+
+# from 2018 to 2024
+for (year in 2018:2024) {
+  
+  url &lt;- paste0(&quot;https://www.esportsearnings.com/history/&quot;, year, &quot;/countries&quot;)
+  webpage &lt;- read_html(url)
+  rows &lt;- webpage %&gt;% html_nodes(&quot;tr&quot;)
+  data &lt;- data.frame(
+    Rank = character(),
+    Country = character(),
+    Total_Earnings = character(),
+    Number_of_Players = character(),
+    stringsAsFactors = FALSE
+  )
+  
+  for (row in rows) {
+    # grab data
+    columns &lt;- row %&gt;% html_nodes(&quot;td&quot;) %&gt;% html_text(trim = TRUE)
+    if (length(columns) == 4) {
+      data &lt;- bind_rows(data, as.data.frame(t(columns), stringsAsFactors = FALSE))
+    }
+  }
+  data$Year &lt;- year
+  all_data &lt;- bind_rows(all_data, data)
+  
+}
+
+colnames(all_data) &lt;- c(&quot;Rank&quot;, &quot;Country&quot;, &quot;Total_Earnings&quot;, &quot;Number_of_Players&quot;, &quot;Year&quot;)
+all_data$Year &lt;- all_data$Rank
+all_data[, 1:4] &lt;- all_data[, 6:9]
+
+all_data &lt;- all_data[, c(5, 1:4)]
+colnames(all_data) &lt;- c(&quot;Year&quot;, &quot;Current_year_Ranking&quot;, &quot;Countries&quot;, &quot;Overall_Earnings&quot;, &quot;Number_of_Players&quot;)
+all_data$Current_year_Ranking &lt;- as.numeric(gsub(&quot;\\.&quot;, &quot;&quot;, all_data$Current_year_Ranking))
+
+head(all_data, 10)</code></pre>
+<pre><code>##    Year Current_year_Ranking          Countries Overall_Earnings
+## 1  2018                    1      United States   $30,759,242.29
+## 2  2018                    2              China   $22,842,722.32
+## 3  2018                    3 Korea, Republic of   $14,525,776.11
+## 4  2018                    4            Denmark   $10,617,906.40
+## 5  2018                    5            Finland    $7,588,236.19
+## 6  2018                    6             France    $6,506,818.26
+## 7  2018                    7             Sweden    $6,505,555.90
+## 8  2018                    8 Russian Federation    $6,343,270.12
+## 9  2018                    9             Canada    $5,366,853.24
+## 10 2018                   10            Germany    $4,553,609.63
+##    Number_of_Players
+## 1       4412 Players
+## 2       1460 Players
+## 3       1283 Players
+## 4        432 Players
+## 5        365 Players
+## 6       1076 Players
+## 7        553 Players
+## 8        901 Players
+## 9        783 Players
+## 10       908 Players</code></pre>
+<pre class="r"><code>write.csv(all_data, &quot;Earnings_country_2018_2024.csv&quot;, row.names = FALSE)</code></pre>
+<p>Also, we access data about top games from 2018 to 2024,</p>
+<pre class="r"><code>all_data &lt;- data.frame(
+  Year = integer(),
+  Rank = integer(),
+  Game = character(),
+  Total_Earnings = character(),
+  Total_Players = character(),
+  Total_Tournaments = character(),
+  stringsAsFactors = FALSE
+)
+
+# 2018 to 2024
+for (year in 2018:2024) {
+  url &lt;- paste0(&quot;https://www.esportsearnings.com/history/&quot;, year, &quot;/games&quot;)
+  webpage &lt;- read_html(url)
+  rows &lt;- webpage %&gt;% html_nodes(&quot;tr&quot;)
+  year_data &lt;- data.frame(
+    Rank = integer(),
+    Game = character(),
+    Total_Earnings = character(),
+    Total_Players = character(),
+    Total_Tournaments = character(),
+    stringsAsFactors = FALSE
+  )
+  for (row in rows) {
+    columns &lt;- row %&gt;% html_nodes(&quot;td&quot;) %&gt;% html_text(trim = TRUE)
+    if (length(columns) == 5) {
+      year_data &lt;- bind_rows(year_data, as.data.frame(t(columns), stringsAsFactors = FALSE))
+    }
+  }
+  year_data$Year &lt;- year
+  all_data &lt;- bind_rows(all_data, year_data)
+}
+
+all_data[, 6] &lt;- all_data[, 1]
+all_data[, 1:5] &lt;- all_data[, 7:11]
+all_data &lt;- all_data[, 1:6]
+
+colnames(all_data) &lt;- c(&quot;Current_year_Rank&quot;, &quot;Game&quot;, &quot;Total_Earnings&quot;, &quot;Total_Players&quot;, &quot;Total_Tournaments&quot;, &quot;Year&quot;)
+all_data$Current_year_Rank &lt;- as.numeric(gsub(&quot;\\.&quot;, &quot;&quot;, all_data$Current_year_Rank))
+head(all_data)</code></pre>
+<pre><code>##   Current_year_Rank                             Game Total_Earnings
+## 1                 1                           Dota 2 $41,545,790.86
+## 2                 2 Counter-Strike: Global Offensive $23,319,746.08
+## 3                 3                         Fortnite $19,933,737.00
+## 4                 4                League of Legends $14,706,162.44
+## 5                 5    PLAYERUNKNOWN’S BATTLEGROUNDS  $8,809,745.36
+## 6                 6                   Arena of Valor  $7,076,330.62
+##   Total_Players Total_Tournaments Year
+## 1  1177 Players   182 Tournaments 2018
+## 2  4686 Players  1024 Tournaments 2018
+## 3  1444 Players   179 Tournaments 2018
+## 4  1978 Players   196 Tournaments 2018
+## 5  1683 Players   136 Tournaments 2018
+## 6   662 Players    29 Tournaments 2018</code></pre>
+<pre class="r"><code>write.csv(all_data, &quot;Earnings_topgame_2018_2024.csv&quot;, row.names = FALSE)</code></pre>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

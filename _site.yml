@@ -10,4 +10,5 @@ navbar:
     - icon: fa-github fa-lg
       href: http://github.com/KanyeXuSelf/
 output:
-  html_document
+  html_document:
+    css: https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/vapor/bootstrap.min.css

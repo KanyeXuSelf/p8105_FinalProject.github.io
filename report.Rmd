@@ -28,15 +28,24 @@ library(viridis)
 
 This project aims to analyze the evolving landscape of e-sports, focusing on patterns in player earnings and engagement strategies across demographics and game types. 
 
+## Related work
+
+We are all graduate students in Mailman’s Biostatistics Department, and we wanted to do a positive project that combined our shared love of e-Sports gaming. E-games are becoming an increasingly important part of our lives nowadays, not only as a pastime making a break from the stress of our schedules, but also as a livelihood for some. As this may be a common situation in the world, we were inspired to explore the story behind the e-Sports industry.
+
 ## Key Questions
 
-**What are the key trends in esports earnings across players, countries, and games from 2018 to 2024?**
-**Which countries dominate the esports industry in terms of player count, total earnings, and game diversity?**
-**What are the most profitable games in esports, and how do their earnings trends evolve over time?**
-**How did the COVID-19 pandemic impact the esports industry, and how has the industry adapted to these challenges?**
-**What role do smaller countries play in the global esports ecosystem, and how do they compare to dominant regions?**
-**What are the key predictors of total earnings in esports, and how do player and tournament participation influence financial outcomes?**
-**How can stakeholders address regional disparities and support the growth of underrepresented markets?**
+1. **Earnings Trends and Impact:**
+   - What are the key trends in esports earnings across players, countries, and games from 2018 to 2024?
+   - How did the COVID-19 pandemic affect esports, and which games or countries demonstrated resilience and adaptability?
+
+2. **Regional and Player-Level Analysis:**
+   - How do top-performing countries balance total earnings with revenue from their dominant games?
+   - What is the role of smaller countries like Denmark and Brazil in the global esports ecosystem, and how do they achieve high efficiency with fewer players?
+   - How is player participation linked to total earnings, and which regions have the highest average earnings per player?
+
+3. **Game-Level and Predictive Insights:**
+   - What are the predictors of total game earnings, and how do tournaments and player base influence outcomes?
+   - How have top games evolved over time, and which titles are emerging as key revenue drivers in the esports industry?
 
 ## Data Source and Wrangling
 
@@ -420,6 +429,7 @@ ggplot(top_countries, aes(x = reorder(Country, -Player_Count), y = Player_Count,
   )
 
 ```
+
 #### 2. Top Players analysis
 
 In this section, we analyze **individual player performance** based on the top players and top 500 players' earnings data. This provides insights into individual dominance in esports and the geographic distribution of esports performance.

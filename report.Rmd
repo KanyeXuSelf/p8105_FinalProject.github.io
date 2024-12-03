@@ -365,16 +365,16 @@ top_countries <- country_overall %>%
     Top_Game_Percent = round((Top_Game_Earnings / Total_Earnings) * 100, 2)  
   )
 
-# convert to long format
 top_countries_long <- top_countries %>%
-  select(Country, Total_Earnings, Top_Game_Earnings) %>%
+  select(Country, Total_Earnings, Top_Game_Earnings, Top_Game) %>%
   pivot_longer(
     cols = c(Total_Earnings, Top_Game_Earnings),
     names_to = "Earnings_Type",
     values_to = "Earnings"
   ) %>%
   mutate(
-    Earnings_Type = ifelse(Earnings_Type == "Total_Earnings", "Total Earnings", "Top Game Earnings")
+    Earnings_Type = ifelse(Earnings_Type == "Total_Earnings", "Total Earnings", "Top Game Earnings"),
+    Game_Label = ifelse(Earnings_Type == "Top Game Earnings", Top_Game, NA)  # Only add label for top game earnings
   )
 
 head(top_countries_long)
@@ -386,6 +386,13 @@ This bar chart compares the total earnings (yellow) and earnings from the top ga
 
 ggplot(top_countries_long, aes(x = reorder(Country, -Earnings), y = Earnings, fill = Earnings_Type)) +
   geom_bar(stat = "identity", position = "identity", alpha = 0.9) +
+  geom_text(
+    aes(label = Game_Label), 
+    position = position_stack(vjust = 0.5),  # Position label in the middle of the "Top Game Earnings" bar
+    na.rm = TRUE, 
+    size = 3, 
+    color = "black"  # Adjust text color if needed
+  ) +
   coord_flip() +
   scale_fill_manual(values = c("blue", "#ADD8E6")) +
   scale_y_continuous(labels = scales::comma) +
@@ -400,7 +407,10 @@ ggplot(top_countries_long, aes(x = reorder(Country, -Earnings), y = Earnings, fi
     axis.text.y = element_text(size = 10)
   )
 
+
+
 ```
+
 From the chart, we can see China leads significantly in both categories, with the United States and Korea following. The dominance of top games in total earnings varies, with some countries like Korea showing a higher reliance on top games, while others like Denmark and Brazil have a more diversified earnings distribution.
 
 
@@ -490,6 +500,7 @@ ggplot(top_players, aes(x = reorder(Player_Name, Total_Earnings), y = Total_Earn
 
 
 ```
+
 All of the top 10 highest-earning players have earned their fortunes from Dota 2, with Johan Sundstein (N0tail) leading the list at over $7 million, highlighting the game's massive prize pools and dominance in esports earnings.
 
 Then we expand our focus to top 500 players

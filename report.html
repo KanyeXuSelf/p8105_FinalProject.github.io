@@ -1421,6 +1421,19 @@ class="section level3">
 </div>
 <div id="paired-t-tests" class="section level3">
 <h3>1.2 Paired T-Tests</h3>
+<p>Null Hypothesis (H₀): There is no significant difference in esports
+earnings between 2018 (pre-pandemic) and 2019 (pandemic onset).
+Alternative Hypothesis (H₁): Esports earnings in 2018 are significantly
+different from 2019, reflecting the impact of the pandemic.</p>
+<p>Null Hypothesis (H₀): There is no significant difference in esports
+earnings between 2020 (pandemic onset) and 2021 (recovery phase).
+Alternative Hypothesis (H₁): Esports earnings in 2021 are significantly
+different from 2020, indicating a recovery or continued decline.</p>
+<p>Null Hypothesis (H₀): There is no significant difference in esports
+earnings between 2019 (pandemic onset) and 2020 (initial pandemic
+impact). Alternative Hypothesis (H₁): Esports earnings in 2019 are
+significantly different from 2020, reflecting the industry’s resilience
+or adaptation during the initial pandemic year.</p>
 <pre class="r"><code># Function for t-tests
 perform_t_test &lt;- function(data, col1, col2) {
   t_test &lt;- t.test(data[[col1]], data[[col2]], paired = TRUE)

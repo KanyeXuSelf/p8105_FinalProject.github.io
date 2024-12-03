@@ -705,8 +705,6 @@ top_games <- earnings_topgame %>%
 top_game_trends <- earnings_topgame %>%
   filter(Game %in% top_games)
 
-head(top_game_trends)
-
 # plot
 ggplot(top_game_trends, aes(x = Year, y = Total_Earnings, color = Game)) +
   geom_line(size = 1) +  
@@ -726,6 +724,7 @@ ggplot(top_game_trends, aes(x = Year, y = Total_Earnings, color = Game)) +
     axis.title = element_text(size = 12),
     axis.text = element_text(size = 10)
   )
+
 ```
 
 
@@ -929,7 +928,7 @@ data <- data %>%
 data |> 
   lm(log(Total_Earnings) ~ Year + Total_Players * Total_Tournaments + Frequency, data = _) |> 
   broom::tidy() |> 
-  knitr::kable(digits = 3)
+  knitr::kable(digits = 5)
 
 ```
 

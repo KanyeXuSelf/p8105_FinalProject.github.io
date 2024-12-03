@@ -450,24 +450,24 @@ head(data)</code></pre>
 <pre><code>##   Rank            Country Total_Earnings Number_of_Players
 ## 1    1              China      319027144              9009
 ## 2    2      United States      287353063             28021
-## 3    3              Korea      151388322              5882
-## 4    4 Russian Federation       87641416              5489
-## 5    5             Brazil       67023028              5482
-## 6    6            Denmark       61387735              2124
+## 3    3              Korea      151431446              5883
+## 4    4 Russian Federation       87647289              5489
+## 5    5             Brazil       67055290              5482
+## 6    6            Denmark       61390735              2124
 ##                           Top_Game Earnings_From_Top_Game Percent_From_Top_Game
 ## 1                           Dota 2         $85,737,773.44                26.87%
 ## 2                         Fortnite         $49,472,179.53                17.22%
-## 3                League of Legends         $38,839,896.79                25.66%
+## 3                League of Legends         $38,839,896.79                25.65%
 ## 4                           Dota 2         $38,110,618.85                43.48%
-## 5                Rainbow Six Siege         $12,534,096.39                18.70%
+## 5                Rainbow Six Siege         $12,534,096.39                18.69%
 ## 6 Counter-Strike: Global Offensive         $23,081,252.63                37.60%
 ##   average_earning_per_player
 ## 1                   35412.05
 ## 2                   10254.92
-## 3                   25737.56
-## 4                   15966.74
-## 5                   12226.02
-## 6                   28901.95</code></pre>
+## 3                   25740.51
+## 4                   15967.81
+## 5                   12231.90
+## 6                   28903.36</code></pre>
 <pre class="r"><code>write.csv(data, &quot;data/country_overall.csv&quot;, row.names = FALSE)</code></pre>
 </div>
 <div id="access-top-500-players-by-earnings-past-year"
@@ -722,7 +722,7 @@ head(top_countries_long)</code></pre>
 ## 2 China         Top Game Earnings  85737773.
 ## 3 United States Total Earnings    287353063.
 ## 4 United States Top Game Earnings  49472180.
-## 5 Korea         Total Earnings    151388322.
+## 5 Korea         Total Earnings    151431446.
 ## 6 Korea         Top Game Earnings  38839897.</code></pre>
 <p>This bar chart compares the total earnings (yellow) and earnings from
 the top game (red) for the top 10 countries in e-sports from the
@@ -852,53 +852,68 @@ kable(
 <tbody>
 <tr class="odd">
 <td align="left">China</td>
-<td align="right">139</td>
-<td align="right">31660225</td>
+<td align="right">136</td>
+<td align="right">31168889.3</td>
 </tr>
 <tr class="even">
 <td align="left">United States</td>
-<td align="right">59</td>
-<td align="right">10647210</td>
+<td align="right">62</td>
+<td align="right">10838587.1</td>
 </tr>
 <tr class="odd">
 <td align="left">Korea, Republic of</td>
-<td align="right">44</td>
-<td align="right">5827906</td>
+<td align="right">40</td>
+<td align="right">5003341.9</td>
 </tr>
 <tr class="even">
 <td align="left">Brazil</td>
-<td align="right">29</td>
-<td align="right">4102846</td>
+<td align="right">30</td>
+<td align="right">4181703.0</td>
 </tr>
 <tr class="odd">
 <td align="left">Russian Federation</td>
-<td align="right">26</td>
-<td align="right">6516252</td>
+<td align="right">30</td>
+<td align="right">6735118.5</td>
 </tr>
 <tr class="even">
 <td align="left">Malaysia</td>
 <td align="right">13</td>
-<td align="right">1897398</td>
+<td align="right">1897397.8</td>
 </tr>
 <tr class="odd">
 <td align="left">France</td>
 <td align="right">12</td>
-<td align="right">2591504</td>
+<td align="right">2589004.2</td>
+</tr>
+<tr class="even">
+<td align="left">Germany</td>
+<td align="right">10</td>
+<td align="right">1616827.3</td>
+</tr>
+<tr class="odd">
+<td align="left">Ukraine</td>
+<td align="right">10</td>
+<td align="right">1984435.7</td>
 </tr>
 <tr class="even">
 <td align="left">Denmark</td>
-<td align="right">10</td>
-<td align="right">2556402</td>
+<td align="right">9</td>
+<td align="right">2475412.2</td>
 </tr>
 <tr class="odd">
-<td align="left">Germany</td>
-<td align="right">10</td>
-<td align="right">1616827</td>
+<td align="left">Mongolia</td>
+<td align="right">9</td>
+<td align="right">1551713.2</td>
 </tr>
 <tr class="even">
-<td align="left">Ukraine</td>
-<td align="right">10</td>
-<td align="right">2031436</td>
+<td align="left">Thailand</td>
+<td align="right">9</td>
+<td align="right">725147.5</td>
+</tr>
+<tr class="odd">
+<td align="left">United Kingdom</td>
+<td align="right">9</td>
+<td align="right">1268504.9</td>
 </tr>
 </tbody>
 </table>
@@ -1045,7 +1060,7 @@ head(yearly_earnings)</code></pre>
 ## 3  2020     144918094.
 ## 4  2021     255439856.
 ## 5  2022     239756324.
-## 6  2023     229102380.</code></pre>
+## 6  2023     229104847.</code></pre>
 <pre class="r"><code># Plot the trend line
 ggplot(yearly_earnings, aes(x = Year, y = Total_Earnings)) +
   geom_line(color = &quot;orange&quot;, size = 1) +
@@ -1161,22 +1176,7 @@ top_games &lt;- earnings_topgame %&gt;%
 top_game_trends &lt;- earnings_topgame %&gt;%
   filter(Game %in% top_games)
 
-head(top_game_trends)</code></pre>
-<pre><code>##   Current_year_Rank                             Game Total_Earnings
-## 1                 1                           Dota 2       41545791
-## 2                 2 Counter-Strike: Global Offensive       23319746
-## 3                 3                         Fortnite       19933737
-## 4                 4                League of Legends       14706162
-## 5                 5    PLAYERUNKNOWN’S BATTLEGROUNDS        8809745
-## 6                 6                   Arena of Valor        7076331
-##   Total_Players Total_Tournaments Year
-## 1  1177 Players   182 Tournaments 2018
-## 2  4686 Players  1024 Tournaments 2018
-## 3  1444 Players   179 Tournaments 2018
-## 4  1978 Players   196 Tournaments 2018
-## 5  1683 Players   136 Tournaments 2018
-## 6   662 Players    29 Tournaments 2018</code></pre>
-<pre class="r"><code># plot
+# plot
 ggplot(top_game_trends, aes(x = Year, y = Total_Earnings, color = Game)) +
   geom_line(size = 1) +  
   geom_point(size = 1.5) +  
@@ -1412,7 +1412,7 @@ is a summary of the key findings.</p>
 data |&gt; 
   lm(log(Total_Earnings) ~ Year + Total_Players * Total_Tournaments + Frequency, data = _) |&gt; 
   broom::tidy() |&gt; 
-  knitr::kable(digits = 3)</code></pre>
+  knitr::kable(digits = 5)</code></pre>
 <table style="width:100%;">
 <colgroup>
 <col width="46%" />
@@ -1433,45 +1433,45 @@ data |&gt;
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">7.070</td>
-<td align="right">0.223</td>
-<td align="right">31.745</td>
-<td align="right">0.000</td>
+<td align="right">7.06983</td>
+<td align="right">0.22270</td>
+<td align="right">31.74545</td>
+<td align="right">0.00000</td>
 </tr>
 <tr class="even">
 <td align="left">Year</td>
-<td align="right">0.131</td>
-<td align="right">0.044</td>
-<td align="right">3.011</td>
-<td align="right">0.003</td>
+<td align="right">0.13133</td>
+<td align="right">0.04362</td>
+<td align="right">3.01091</td>
+<td align="right">0.00266</td>
 </tr>
 <tr class="odd">
 <td align="left">Total_Players</td>
-<td align="right">0.005</td>
-<td align="right">0.000</td>
-<td align="right">16.125</td>
-<td align="right">0.000</td>
+<td align="right">0.00515</td>
+<td align="right">0.00032</td>
+<td align="right">16.12475</td>
+<td align="right">0.00000</td>
 </tr>
 <tr class="even">
 <td align="left">Total_Tournaments</td>
-<td align="right">0.012</td>
-<td align="right">0.002</td>
-<td align="right">7.284</td>
-<td align="right">0.000</td>
+<td align="right">0.01190</td>
+<td align="right">0.00163</td>
+<td align="right">7.28361</td>
+<td align="right">0.00000</td>
 </tr>
 <tr class="odd">
 <td align="left">Frequency</td>
-<td align="right">0.359</td>
-<td align="right">0.039</td>
-<td align="right">9.184</td>
-<td align="right">0.000</td>
+<td align="right">0.35920</td>
+<td align="right">0.03912</td>
+<td align="right">9.18259</td>
+<td align="right">0.00000</td>
 </tr>
 <tr class="even">
 <td align="left">Total_Players:Total_Tournaments</td>
-<td align="right">0.000</td>
-<td align="right">0.000</td>
-<td align="right">-12.030</td>
-<td align="right">0.000</td>
+<td align="right">-0.00001</td>
+<td align="right">0.00000</td>
+<td align="right">-12.03167</td>
+<td align="right">0.00000</td>
 </tr>
 </tbody>
 </table>
@@ -1484,22 +1484,22 @@ summary(model_interaction)</code></pre>
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -8.4385 -2.1930  0.0398  2.1293  9.9289 
+## -8.4410 -2.1929  0.0398  2.1292  9.9317 
 ## 
 ## Coefficients:
 ##                                   Estimate Std. Error t value Pr(&gt;|t|)    
 ## (Intercept)                      7.070e+00  2.227e-01  31.745  &lt; 2e-16 ***
 ## Year                             1.313e-01  4.362e-02   3.011  0.00266 ** 
-## Total_Players                    5.147e-03  3.192e-04  16.125  &lt; 2e-16 ***
-## Total_Tournaments                1.190e-02  1.634e-03   7.284 5.88e-13 ***
-## Frequency                        3.592e-01  3.912e-02   9.184  &lt; 2e-16 ***
-## Total_Players:Total_Tournaments -8.049e-06  6.691e-07 -12.030  &lt; 2e-16 ***
+## Total_Players                    5.148e-03  3.193e-04  16.125  &lt; 2e-16 ***
+## Total_Tournaments                1.190e-02  1.633e-03   7.284 5.89e-13 ***
+## Frequency                        3.592e-01  3.912e-02   9.183  &lt; 2e-16 ***
+## Total_Players:Total_Tournaments -8.050e-06  6.691e-07 -12.032  &lt; 2e-16 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## Residual standard error: 2.724 on 1194 degrees of freedom
-## Multiple R-squared:  0.4206, Adjusted R-squared:  0.4181 
-## F-statistic: 173.3 on 5 and 1194 DF,  p-value: &lt; 2.2e-16</code></pre>
+## Multiple R-squared:  0.4206, Adjusted R-squared:  0.4182 
+## F-statistic: 173.4 on 5 and 1194 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>Model interpretation:</p>
 <p>All predictors, including the interaction term, are statistically
 significant (p&lt;0.05). Total_Players, Total_Tournaments, and Frequency

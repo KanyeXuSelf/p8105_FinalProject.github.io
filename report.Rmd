@@ -2,7 +2,7 @@
 
 title: "Esport Report"
 date: "2024-12-02"
-output: github_document
+output: html_document
 
 ---
 
@@ -17,6 +17,23 @@ library(tidyr)
 library(maps)
 library(knitr)
 library(viridis)
+
+knitr::opts_chunk$set(
+  fig.width = 8,      
+  fig.asp = 0.75,     
+  out.width = "80%"   
+)
+
+
+theme_set(theme_minimal() + theme(legend.position = "right"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
 
 ```
 
@@ -369,7 +386,7 @@ This bar chart compares the total earnings (yellow) and earnings from the top ga
 ggplot(top_countries_long, aes(x = reorder(Country, -Earnings), y = Earnings, fill = Earnings_Type)) +
   geom_bar(stat = "identity", position = "identity", alpha = 0.9) +
   coord_flip() +
-  scale_fill_manual(values = c("red", "gold")) +
+  scale_fill_manual(values = c("blue", "#ADD8E6")) +
   scale_y_continuous(labels = scales::comma) +
   labs(
     title = "Top 10 Countries: Total vs. Top Game Earnings",
@@ -412,21 +429,25 @@ This visualization provides a bubble chart to analyze the relationship between t
 
 ```{r}
 
-ggplot(top_countries, aes(x = reorder(Country, -Player_Count), y = Player_Count, size = Total_Earnings)) +
-  geom_point(color = "blue", alpha = 0.7) +
+ggplot(top_countries, aes(x = reorder(Country, -Player_Count), y = Player_Count, size = Total_Earnings, color = Player_Count)) +
+  geom_point(alpha = 0.7) +
   coord_flip() +
   scale_y_continuous(labels = scales::comma) +
   scale_size_continuous(labels = scales::comma) +
+  scale_color_viridis_c(option = "viridis") + 
   labs(
     title = "Total Players by Country (Bubble Size = Total Earnings)",
     x = "Country", y = "Number of Players",
-    size = "Total Earnings (USD)"
+    size = "Total Earnings (USD)",
+    color = "Player Count"  
   ) +
   theme_minimal() +
   theme(
     plot.title = element_text(size = 14, face = "bold"),
-    axis.text.y = element_text(size = 10)
+    axis.text.y = element_text(size = 10),
+    legend.position = "bottom" 
   )
+
 
 ```
 
@@ -445,12 +466,13 @@ top_players <- esports_top100 %>%
 
 # Create a bar chart for the top 10 players by earnings
 ggplot(top_players, aes(x = reorder(Player_Name, Total_Earnings), y = Total_Earnings, fill = Highest_Paying_Game)) +
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity", alpha = 0.8) +  # Add alpha for lighter colors
   geom_text(
     aes(label = paste0("ID: ", Player_ID, "\n$", formatC(Total_Earnings, format = "f", big.mark = ","))),
-    hjust = 1, size = 3
+    hjust = 1, size = 3, color = "white"  # Set text color to white
   ) +  # Add Player ID and earnings as labels
   coord_flip() +
+  scale_fill_viridis_d(option = "viridis", name = "Top Game", begin = 0.3, end = 0.8) + 
   labs(
     title = "Top 10 Players by Total Earnings",
     x = "Player Name",
@@ -463,6 +485,8 @@ ggplot(top_players, aes(x = reorder(Player_Name, Total_Earnings), y = Total_Earn
     axis.text.x = element_text(size = 10),
     axis.text.y = element_text(size = 10)
   )
+
+
 
 ```
 All of the top 10 highest-earning players have earned their fortunes from Dota 2, with Johan Sundstein (N0tail) leading the list at over $7 million, highlighting the game's massive prize pools and dominance in esports earnings.
@@ -488,6 +512,8 @@ kable(
   caption = "Top 10 Countries: Player Count and Total Earnings"
 )
 ```
+
+
 
 The distribution of top 500 players by country
 
@@ -521,6 +547,7 @@ ggplot(country_summary1, aes(x = "", y = Player_Count, fill = Country)) +
     legend.title = element_text(size = 12),
     legend.text = element_text(size = 10)
   )
+
 
 ```
 
@@ -558,6 +585,8 @@ ggplot(country_summary2, aes(x = "", y = Total_Earnings, fill = Country)) +
   )
 
 ```
+
+
 - From Top 500 Players by Country (Proportion), **United States, China, and South Korea** dominate in player representation, reflecting strong esports ecosystems.The "Other" category includes countries with fewer top players, highlighting the concentration of talent in key regions.
 - From Total Earnings by Country (Top 500 Players), **China** leads in total earnings, followed by the **United States** and **South Korea**, showcasing financial dominance. Smaller countries like **Denmark** and **Ukraine** excel in earnings despite fewer players, indicating high efficiency and performance.
 - Esports talent and earnings are concentrated in a few regions, with smaller countries showing strong player efficiency.
@@ -575,8 +604,13 @@ top500_365 <- top500_365 %>%
   ) %>%
   drop_na(Total_Earnings)  # Remove rows with missing earnings
 
+# Filter countries with more than 10 players
+filtered_countries <- top500_365 %>%
+  group_by(Country) %>%
+  filter(n() > 5)  # Keep only countries with more than 10 players
+
 # Create the boxplot
-ggplot(top500_365, aes(x = reorder(Country, -Total_Earnings, median), y = log(Total_Earnings), fill = Country)) +
+ggplot(filtered_countries, aes(x = reorder(Country, -Total_Earnings, median), y = log(Total_Earnings), fill = Country)) +
   geom_boxplot(outlier.color = "red", outlier.shape = 16, outlier.size = 1.5, alpha = 0.7) +
   labs(
     title = "Distribution of Player Earnings by Country (Log Scale)",
@@ -589,6 +623,7 @@ ggplot(top500_365, aes(x = reorder(Country, -Total_Earnings, median), y = log(To
     legend.position = "none",
     plot.title = element_text(size = 16, face = "bold")
   )
+
 
 
 ```
@@ -620,8 +655,8 @@ head(yearly_earnings)
 
 # Plot the trend line
 ggplot(yearly_earnings, aes(x = Year, y = Total_Earnings)) +
-  geom_line(color = "orange", size = 1) +
-  geom_point(color = "red", size = 2) +
+  geom_line(color = "#ADD8E6", size = 1) +
+  geom_point(color = "blue", size = 2) +
   labs(
     title = "Total Earnings Trends Over Time (2018-2024)",
     x = "Year",
@@ -658,10 +693,11 @@ top_countries <- yearly_country_earnings %>%
 top_country_trends <- yearly_country_earnings %>%
   filter(Countries %in% top_countries$Countries)
 
-# Step 4: Plot yearly trends for the top 10 countries
+# Step 4: Plot yearly trends for the top 10 countries with a consistent color theme
 ggplot(top_country_trends, aes(x = Year, y = Total_Earnings, color = Countries)) +
   geom_line(size = 1) +
   geom_point(size = 2) +
+  scale_color_viridis_d(option = "plasma", name = "Country") +  # Use the "plasma" palette from viridis
   labs(
     title = "Yearly Earnings Trends for Top 10 Countries (2018-2024)",
     x = "Year",
@@ -676,6 +712,7 @@ ggplot(top_country_trends, aes(x = Year, y = Total_Earnings, color = Countries))
     legend.text = element_text(size = 10),
     legend.key.size = unit(0.6, "cm")  # Adjust legend key size for better fit
   )
+
 
 ```
 

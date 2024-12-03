@@ -276,7 +276,7 @@ $(document).ready(function () {
 
 
 <hr />
-<p>title: “Esport Report” date: “2024-12-02” output: github_document</p>
+<p>title: “Esport Report” date: “2024-12-02” output: html_document</p>
 <hr />
 <pre class="r"><code>library(rvest)
 library(dplyr)
@@ -286,7 +286,24 @@ library(ggplot2)
 library(tidyr)
 library(maps)
 library(knitr)
-library(viridis)</code></pre>
+library(viridis)
+
+knitr::opts_chunk$set(
+  fig.width = 8,      
+  fig.asp = 0.75,     
+  out.width = &quot;80%&quot;   
+)
+
+
+theme_set(theme_minimal() + theme(legend.position = &quot;right&quot;))
+
+options(
+  ggplot2.continuous.colour = &quot;viridis&quot;,
+  ggplot2.continuous.fill = &quot;viridis&quot;
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d</code></pre>
 <p><strong>Project Name:</strong> <em>Play by Numbers: Esports Trends
 Unveiled</em></p>
 <p><strong>Project Members:</strong> Xun Sun (xs2569), Xinghao Qiao
@@ -449,7 +466,7 @@ data &lt;- data %&gt;%
 head(data)</code></pre>
 <pre><code>##   Rank            Country Total_Earnings Number_of_Players
 ## 1    1              China      319027144              9009
-## 2    2      United States      287353063             28021
+## 2    2      United States      287363427             28023
 ## 3    3              Korea      151431446              5883
 ## 4    4 Russian Federation       87647289              5489
 ## 5    5             Brazil       67055290              5482
@@ -463,7 +480,7 @@ head(data)</code></pre>
 ## 6 Counter-Strike: Global Offensive         $23,081,252.63                37.60%
 ##   average_earning_per_player
 ## 1                   35412.05
-## 2                   10254.92
+## 2                   10254.56
 ## 3                   25740.51
 ## 4                   15967.81
 ## 5                   12231.90
@@ -720,7 +737,7 @@ head(top_countries_long)</code></pre>
 ##   &lt;chr&gt;         &lt;chr&gt;                  &lt;dbl&gt;
 ## 1 China         Total Earnings    319027144.
 ## 2 China         Top Game Earnings  85737773.
-## 3 United States Total Earnings    287353063.
+## 3 United States Total Earnings    287363427.
 ## 4 United States Top Game Earnings  49472180.
 ## 5 Korea         Total Earnings    151431446.
 ## 6 Korea         Top Game Earnings  38839897.</code></pre>
@@ -730,7 +747,7 @@ top-performing game in each country.</p>
 <pre class="r"><code>ggplot(top_countries_long, aes(x = reorder(Country, -Earnings), y = Earnings, fill = Earnings_Type)) +
   geom_bar(stat = &quot;identity&quot;, position = &quot;identity&quot;, alpha = 0.9) +
   coord_flip() +
-  scale_fill_manual(values = c(&quot;red&quot;, &quot;gold&quot;)) +
+  scale_fill_manual(values = c(&quot;blue&quot;, &quot;#ADD8E6&quot;)) +
   scale_y_continuous(labels = scales::comma) +
   labs(
     title = &quot;Top 10 Countries: Total vs. Top Game Earnings&quot;,
@@ -742,7 +759,7 @@ top-performing game in each country.</p>
     legend.position = &quot;top&quot;,
     axis.text.y = element_text(size = 10)
   )</code></pre>
-<p><img src="report_files/figure-html/unnamed-chunk-9-1.png" width="672" />
+<p><img src="report_files/figure-html/unnamed-chunk-9-1.png" width="80%" />
 From the chart, we can see China leads significantly in both categories,
 with the United States and Korea following. The dominance of top games
 in total earnings varies, with some countries like Korea showing a
@@ -765,26 +782,29 @@ each country’s esports economy on a single title.</p>
     legend.position = &quot;none&quot;,
     axis.text.y = element_text(size = 10)
   )</code></pre>
-<p><img src="report_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="report_files/figure-html/unnamed-chunk-10-1.png" width="80%" /></p>
 <p>This visualization provides a bubble chart to analyze the
 relationship between the number of esports players and their total
 earnings for each country.</p>
-<pre class="r"><code>ggplot(top_countries, aes(x = reorder(Country, -Player_Count), y = Player_Count, size = Total_Earnings)) +
-  geom_point(color = &quot;blue&quot;, alpha = 0.7) +
+<pre class="r"><code>ggplot(top_countries, aes(x = reorder(Country, -Player_Count), y = Player_Count, size = Total_Earnings, color = Player_Count)) +
+  geom_point(alpha = 0.7) +
   coord_flip() +
   scale_y_continuous(labels = scales::comma) +
   scale_size_continuous(labels = scales::comma) +
+  scale_color_viridis_c(option = &quot;viridis&quot;) + 
   labs(
     title = &quot;Total Players by Country (Bubble Size = Total Earnings)&quot;,
     x = &quot;Country&quot;, y = &quot;Number of Players&quot;,
-    size = &quot;Total Earnings (USD)&quot;
+    size = &quot;Total Earnings (USD)&quot;,
+    color = &quot;Player Count&quot;  
   ) +
   theme_minimal() +
   theme(
     plot.title = element_text(size = 14, face = &quot;bold&quot;),
-    axis.text.y = element_text(size = 10)
+    axis.text.y = element_text(size = 10),
+    legend.position = &quot;bottom&quot; 
   )</code></pre>
-<p><img src="report_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p><img src="report_files/figure-html/unnamed-chunk-11-1.png" width="80%" /></p>
 </div>
 <div id="top-players-analysis" class="section level4">
 <h4>2. Top Players analysis</h4>
@@ -800,12 +820,13 @@ top_players &lt;- esports_top100 %&gt;%
 
 # Create a bar chart for the top 10 players by earnings
 ggplot(top_players, aes(x = reorder(Player_Name, Total_Earnings), y = Total_Earnings, fill = Highest_Paying_Game)) +
-  geom_bar(stat = &quot;identity&quot;) +
+  geom_bar(stat = &quot;identity&quot;, alpha = 0.8) +  # Add alpha for lighter colors
   geom_text(
     aes(label = paste0(&quot;ID: &quot;, Player_ID, &quot;\n$&quot;, formatC(Total_Earnings, format = &quot;f&quot;, big.mark = &quot;,&quot;))),
-    hjust = 1, size = 3
+    hjust = 1, size = 3, color = &quot;white&quot;  # Set text color to white
   ) +  # Add Player ID and earnings as labels
   coord_flip() +
+  scale_fill_viridis_d(option = &quot;viridis&quot;, name = &quot;Top Game&quot;, begin = 0.3, end = 0.8) + 
   labs(
     title = &quot;Top 10 Players by Total Earnings&quot;,
     x = &quot;Player Name&quot;,
@@ -818,7 +839,7 @@ ggplot(top_players, aes(x = reorder(Player_Name, Total_Earnings), y = Total_Earn
     axis.text.x = element_text(size = 10),
     axis.text.y = element_text(size = 10)
   )</code></pre>
-<p><img src="report_files/figure-html/unnamed-chunk-12-1.png" width="672" />
+<p><img src="report_files/figure-html/unnamed-chunk-12-1.png" width="80%" />
 All of the top 10 highest-earning players have earned their fortunes
 from Dota 2, with Johan Sundstein (N0tail) leading the list at over $7
 million, highlighting the game’s massive prize pools and dominance in
@@ -946,7 +967,7 @@ ggplot(country_summary1, aes(x = &quot;&quot;, y = Player_Count, fill = Country)
     legend.title = element_text(size = 12),
     legend.text = element_text(size = 10)
   )</code></pre>
-<p><img src="report_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="report_files/figure-html/unnamed-chunk-14-1.png" width="80%" /></p>
 <p>The distribution of top 500 players earnings by country</p>
 <pre class="r"><code># Filter small values and group as &quot;Other&quot;
 threshold &lt;- 2e6  # Define a threshold for minimum total earnings
@@ -976,19 +997,22 @@ ggplot(country_summary2, aes(x = &quot;&quot;, y = Total_Earnings, fill = Countr
     legend.title = element_text(size = 12),
     legend.text = element_text(size = 10)
   )</code></pre>
-<p><img src="report_files/figure-html/unnamed-chunk-15-1.png" width="672" />
-- From Top 500 Players by Country (Proportion), <strong>United States,
+<p><img src="report_files/figure-html/unnamed-chunk-15-1.png" width="80%" /></p>
+<ul>
+<li>From Top 500 Players by Country (Proportion), <strong>United States,
 China, and South Korea</strong> dominate in player representation,
 reflecting strong esports ecosystems.The “Other” category includes
 countries with fewer top players, highlighting the concentration of
-talent in key regions. - From Total Earnings by Country (Top 500
-Players), <strong>China</strong> leads in total earnings, followed by
-the <strong>United States</strong> and <strong>South Korea</strong>,
+talent in key regions.</li>
+<li>From Total Earnings by Country (Top 500 Players),
+<strong>China</strong> leads in total earnings, followed by the
+<strong>United States</strong> and <strong>South Korea</strong>,
 showcasing financial dominance. Smaller countries like
 <strong>Denmark</strong> and <strong>Ukraine</strong> excel in earnings
-despite fewer players, indicating high efficiency and performance. -
-Esports talent and earnings are concentrated in a few regions, with
-smaller countries showing strong player efficiency.</p>
+despite fewer players, indicating high efficiency and performance.</li>
+<li>Esports talent and earnings are concentrated in a few regions, with
+smaller countries showing strong player efficiency.</li>
+</ul>
 <p>The distribution of top players earning by countries</p>
 <pre class="r"><code># Clean and prepare data
 top500_365 &lt;- top500_365 %&gt;%
@@ -998,8 +1022,13 @@ top500_365 &lt;- top500_365 %&gt;%
   ) %&gt;%
   drop_na(Total_Earnings)  # Remove rows with missing earnings
 
+# Filter countries with more than 10 players
+filtered_countries &lt;- top500_365 %&gt;%
+  group_by(Country) %&gt;%
+  filter(n() &gt; 5)  # Keep only countries with more than 10 players
+
 # Create the boxplot
-ggplot(top500_365, aes(x = reorder(Country, -Total_Earnings, median), y = log(Total_Earnings), fill = Country)) +
+ggplot(filtered_countries, aes(x = reorder(Country, -Total_Earnings, median), y = log(Total_Earnings), fill = Country)) +
   geom_boxplot(outlier.color = &quot;red&quot;, outlier.shape = 16, outlier.size = 1.5, alpha = 0.7) +
   labs(
     title = &quot;Distribution of Player Earnings by Country (Log Scale)&quot;,
@@ -1012,7 +1041,7 @@ ggplot(top500_365, aes(x = reorder(Country, -Total_Earnings, median), y = log(To
     legend.position = &quot;none&quot;,
     plot.title = element_text(size = 16, face = &quot;bold&quot;)
   )</code></pre>
-<p><img src="report_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p><img src="report_files/figure-html/unnamed-chunk-16-1.png" width="80%" /></p>
 </div>
 </div>
 <div id="longitudinal-comparison" class="section level3">
@@ -1060,18 +1089,18 @@ head(yearly_earnings)</code></pre>
 ## 3  2020     144918094.
 ## 4  2021     255439856.
 ## 5  2022     239756324.
-## 6  2023     229104847.</code></pre>
+## 6  2023     229106123.</code></pre>
 <pre class="r"><code># Plot the trend line
 ggplot(yearly_earnings, aes(x = Year, y = Total_Earnings)) +
-  geom_line(color = &quot;orange&quot;, size = 1) +
-  geom_point(color = &quot;red&quot;, size = 2) +
+  geom_line(color = &quot;#ADD8E6&quot;, size = 1) +
+  geom_point(color = &quot;blue&quot;, size = 2) +
   labs(
     title = &quot;Total Earnings Trends Over Time (2018-2024)&quot;,
     x = &quot;Year&quot;,
     y = &quot;Total Earnings (USD)&quot;
   ) +
   theme_minimal()</code></pre>
-<p><img src="report_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p><img src="report_files/figure-html/unnamed-chunk-17-1.png" width="80%" /></p>
 </div>
 <div id="top-10-countries-earnings-trend-2018-2024"
 class="section level4">
@@ -1117,10 +1146,11 @@ top_countries &lt;- yearly_country_earnings %&gt;%
 top_country_trends &lt;- yearly_country_earnings %&gt;%
   filter(Countries %in% top_countries$Countries)
 
-# Step 4: Plot yearly trends for the top 10 countries
+# Step 4: Plot yearly trends for the top 10 countries with a consistent color theme
 ggplot(top_country_trends, aes(x = Year, y = Total_Earnings, color = Countries)) +
   geom_line(size = 1) +
   geom_point(size = 2) +
+  scale_color_viridis_d(option = &quot;plasma&quot;, name = &quot;Country&quot;) +  # Use the &quot;plasma&quot; palette from viridis
   labs(
     title = &quot;Yearly Earnings Trends for Top 10 Countries (2018-2024)&quot;,
     x = &quot;Year&quot;,
@@ -1135,7 +1165,7 @@ ggplot(top_country_trends, aes(x = Year, y = Total_Earnings, color = Countries))
     legend.text = element_text(size = 10),
     legend.key.size = unit(0.6, &quot;cm&quot;)  # Adjust legend key size for better fit
   )</code></pre>
-<p><img src="report_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p><img src="report_files/figure-html/unnamed-chunk-18-1.png" width="80%" /></p>
 </div>
 <div id="top-10-games-earnings-trend-2018-2024" class="section level4">
 <h4>3. Top 10 Games Earnings Trend (2018-2024)</h4>
@@ -1195,7 +1225,7 @@ ggplot(top_game_trends, aes(x = Year, y = Total_Earnings, color = Game)) +
     axis.title = element_text(size = 12),
     axis.text = element_text(size = 10)
   )</code></pre>
-<p><img src="report_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p><img src="report_files/figure-html/unnamed-chunk-19-1.png" width="80%" /></p>
 </div>
 <div id="overall-observations" class="section level4">
 <h4>4. Overall Observations</h4>
@@ -1315,7 +1345,7 @@ ggplot(data = map_data_merged, aes(x = long, y = lat, group = group, fill = Tota
   theme(
     plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
   )</code></pre>
-<p><img src="report_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p><img src="report_files/figure-html/unnamed-chunk-21-1.png" width="80%" /></p>
 </div>
 <div id="average-earnings-from-top-500-players-by-country"
 class="section level3">
@@ -1337,7 +1367,7 @@ ggplot(data = map_data_merged, aes(x = long, y = lat, group = group, fill = Aver
   theme(
     plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
   )</code></pre>
-<p><img src="report_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p><img src="report_files/figure-html/unnamed-chunk-22-1.png" width="80%" /></p>
 </div>
 <div id="number-of-players-from-top-500-players-by-country"
 class="section level3">
@@ -1359,7 +1389,7 @@ ggplot(data = map_data_merged, aes(x = long, y = lat, group = group, fill = Play
   theme(
     plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
   )</code></pre>
-<p><img src="report_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p><img src="report_files/figure-html/unnamed-chunk-23-1.png" width="80%" /></p>
 </div>
 </div>
 <div id="statistical-analysis" class="section level2">
@@ -1433,44 +1463,44 @@ data |&gt;
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">7.06983</td>
+<td align="right">7.06981</td>
 <td align="right">0.22270</td>
-<td align="right">31.74545</td>
+<td align="right">31.74525</td>
 <td align="right">0.00000</td>
 </tr>
 <tr class="even">
 <td align="left">Year</td>
-<td align="right">0.13133</td>
+<td align="right">0.13127</td>
 <td align="right">0.04362</td>
-<td align="right">3.01091</td>
-<td align="right">0.00266</td>
+<td align="right">3.00949</td>
+<td align="right">0.00267</td>
 </tr>
 <tr class="odd">
 <td align="left">Total_Players</td>
 <td align="right">0.00515</td>
 <td align="right">0.00032</td>
-<td align="right">16.12475</td>
+<td align="right">16.12328</td>
 <td align="right">0.00000</td>
 </tr>
 <tr class="even">
 <td align="left">Total_Tournaments</td>
 <td align="right">0.01190</td>
 <td align="right">0.00163</td>
-<td align="right">7.28361</td>
+<td align="right">7.28283</td>
 <td align="right">0.00000</td>
 </tr>
 <tr class="odd">
 <td align="left">Frequency</td>
-<td align="right">0.35920</td>
+<td align="right">0.35926</td>
 <td align="right">0.03912</td>
-<td align="right">9.18259</td>
+<td align="right">9.18437</td>
 <td align="right">0.00000</td>
 </tr>
 <tr class="even">
 <td align="left">Total_Players:Total_Tournaments</td>
 <td align="right">-0.00001</td>
 <td align="right">0.00000</td>
-<td align="right">-12.03167</td>
+<td align="right">-12.03205</td>
 <td align="right">0.00000</td>
 </tr>
 </tbody>
@@ -1484,16 +1514,16 @@ summary(model_interaction)</code></pre>
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -8.4410 -2.1929  0.0398  2.1292  9.9317 
+## -8.4403 -2.1929  0.0397  2.1295  9.9343 
 ## 
 ## Coefficients:
 ##                                   Estimate Std. Error t value Pr(&gt;|t|)    
 ## (Intercept)                      7.070e+00  2.227e-01  31.745  &lt; 2e-16 ***
-## Year                             1.313e-01  4.362e-02   3.011  0.00266 ** 
-## Total_Players                    5.148e-03  3.193e-04  16.125  &lt; 2e-16 ***
-## Total_Tournaments                1.190e-02  1.633e-03   7.284 5.89e-13 ***
-## Frequency                        3.592e-01  3.912e-02   9.183  &lt; 2e-16 ***
-## Total_Players:Total_Tournaments -8.050e-06  6.691e-07 -12.032  &lt; 2e-16 ***
+## Year                             1.313e-01  4.362e-02   3.009  0.00267 ** 
+## Total_Players                    5.148e-03  3.193e-04  16.123  &lt; 2e-16 ***
+## Total_Tournaments                1.190e-02  1.633e-03   7.283 5.92e-13 ***
+## Frequency                        3.593e-01  3.912e-02   9.184  &lt; 2e-16 ***
+## Total_Players:Total_Tournaments -8.051e-06  6.691e-07 -12.032  &lt; 2e-16 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
@@ -1517,7 +1547,7 @@ plot(model_interaction, which = 1, main = &quot;Residuals vs Fitted&quot;)
 
 # Normal Q-Q plot
 plot(model_interaction, which = 2, main = &quot;Normal Q-Q Plot&quot;)</code></pre>
-<p><img src="report_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<p><img src="report_files/figure-html/unnamed-chunk-27-1.png" width="80%" /></p>
 <p>The model provides significant insights into the predictors of
 esports earnings, with key variables such as Total_Players,
 Total_Tournaments, and Frequency showing strong effects. However,

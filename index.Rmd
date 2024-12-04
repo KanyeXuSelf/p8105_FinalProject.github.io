@@ -1,16 +1,49 @@
 ---
-title: "E-sports........Version1"
+title: "Play by Numbers: Esports Trends Unveiled"
 output:
-  html_document:
-    code_folding: hide
+  html_document
 ---
-# Welcome to the E-sports Dashboard
+\
+\
 
-This dashboard provides insights into the E-sports industry.
+## Overview
 
-## Embedded YouTube Video
+\
 
-Below is a brief introduction to the topic. Watch the video for more context.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/KrtAGPUAHD8" frameborder="0" border="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+In this project, we delves into the dynamic and fast-growing world of e-sports, analyzing trends in player earnings, regional performance, and game-level engagement. By examining data from 2018 to 2024, we aim to uncover how the industry has evolved, the impact of external factors like the COVID-19 pandemic, and the strategies that drive success for players, games, and countries. Our insights focus on both high-level trends and granular details to better understand the ecosystem shaping competitive gaming today. 
+\
+\
 
+### Main Questions
+\
+
+1. **Earnings Trends and Impact:**
+   - What are the key trends in esports earnings across players, countries, and games from 2018 to 2024?
+   - How did the COVID-19 pandemic affect esports, and which games or countries demonstrated resilience and adaptability?
+\
+
+2. **Regional and Player-Level Analysis:**
+   - How do top-performing countries balance total earnings with revenue from their dominant games?
+   - What is the role of smaller countries like Denmark and Brazil in the global esports ecosystem, and how do they achieve high efficiency with fewer players?
+   - How is player participation linked to total earnings, and which regions have the highest average earnings per player?
+\
+
+3. **Game-Level and Predictive Insights:**
+   - What are the predictors of total game earnings, and how do tournaments and player base influence outcomes?
+   - How have top games evolved over time, and which titles are emerging as key revenue drivers in the esports industry?
+\
+
+
+## Screencast
+\
+
+Watch the video below:
+
+<iframe width="560" height="315" 
+  src="https://www.youtube.com/embed/KrtAGPUAHD8" 
+  title="YouTube video player" 
+  frameborder="0" 
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+  allowfullscreen>
+</iframe>

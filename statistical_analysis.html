@@ -11,7 +11,7 @@
 
 
 
-<title>Statistical</title>
+<title>Statistical Analysis</title>
 
 <script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -360,12 +360,363 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Statistical</h1>
+<h1 class="title toc-ignore">Statistical Analysis</h1>
 
 </div>
 
 
+<pre class="r"><code>library(rvest)
+library(dplyr)
+library(tidyverse)
+library(httr)
+library(ggplot2)
+library(tidyr)
+library(maps)
+library(knitr)
+library(viridis)
+library(broom)
 
+knitr::opts_chunk$set(
+  fig.width = 8,      
+  fig.asp = 0.75,     
+  out.width = &quot;80%&quot;   
+)
+
+
+theme_set(theme_minimal() + theme(legend.position = &quot;right&quot;))
+
+options(
+  ggplot2.continuous.colour = &quot;viridis&quot;,
+  ggplot2.continuous.fill = &quot;viridis&quot;
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+
+rm(list = ls())
+
+country_overall &lt;- read.csv(&quot;data/country_overall.csv&quot;)
+esports_top100 &lt;- read.csv(&quot;data/esports_earnings_top100_overall.csv&quot;)
+top500_365 &lt;- read.csv(&quot;data/top500_365.csv&quot;)
+earnings_country &lt;- read.csv(&quot;data/Earnings_country_2018_2024.csv&quot;)
+earnings_topgame &lt;- read.csv(&quot;data/Earnings_topgame_2018_2024.csv&quot;)
+
+country_overall$Total_Earnings &lt;- as.numeric(gsub(&quot;[\\$,]&quot;, &quot;&quot;, country_overall$Total_Earnings))
+esports_top100$Total_Earnings &lt;- as.numeric(gsub(&quot;[\\$,]&quot;, &quot;&quot;, esports_top100$Total_Earnings))
+top500_365$`Total..Last.365.Days.` &lt;- as.numeric(gsub(&quot;[\\$,]&quot;, &quot;&quot;, top500_365$`Total..Last.365.Days.`))
+earnings_country$Overall_Earnings &lt;- as.numeric(gsub(&quot;[\\$,]&quot;, &quot;&quot;, earnings_country$Overall_Earnings))
+earnings_topgame$Total_Earnings &lt;- as.numeric(gsub(&quot;[\\$,]&quot;, &quot;&quot;, earnings_topgame$Total_Earnings))</code></pre>
+<p>In this section, we conduct statistical modeling and analysis to
+investigate factors influencing total earnings in esports games. The
+analysis begins with t-tests to examine differences in earnings across
+countries over multiple years, assessing whether the industry
+demonstrated resilience during the COVID-19 pandemic by rebounding after
+a significant decline in 2020. This is followed by linear regression
+with interaction terms, residual diagnostics, and prediction
+visualization to further explore the factors impacting total
+earnings.</p>
+<div id="data-cleaning-and-feature-engineering-for-t-test"
+class="section level2">
+<h2>1.1 Data Cleaning and Feature Engineering for t-test</h2>
+<pre class="r"><code>paired_data &lt;- reduce(
+  list(
+    earnings_country %&gt;% filter(Year == 2018) %&gt;% select(Countries, Earnings_2018 = Overall_Earnings),
+    earnings_country %&gt;% filter(Year == 2019) %&gt;% select(Countries, Earnings_2019 = Overall_Earnings),
+    earnings_country %&gt;% filter(Year == 2020) %&gt;% select(Countries, Earnings_2020 = Overall_Earnings),
+    earnings_country %&gt;% filter(Year == 2021) %&gt;% select(Countries, Earnings_2021 = Overall_Earnings)
+  ),
+  inner_join,
+  by = &quot;Countries&quot;
+)</code></pre>
+</div>
+<div id="paired-t-tests" class="section level2">
+<h2>1.2 Paired T-Tests</h2>
+<p>Null Hypothesis (H₀): There is no significant difference in esports
+earnings between 2018 (pre-pandemic) and 2019 (pandemic onset).
+Alternative Hypothesis (H₁): Esports earnings in 2018 are significantly
+different from 2019, reflecting the impact of the pandemic.</p>
+<p>Null Hypothesis (H₀): There is no significant difference in esports
+earnings between 2020 (pandemic onset) and 2021 (recovery phase).
+Alternative Hypothesis (H₁): Esports earnings in 2021 are significantly
+different from 2020, indicating a recovery or continued decline.</p>
+<p>Null Hypothesis (H₀): There is no significant difference in esports
+earnings between 2019 (pandemic onset) and 2020 (initial pandemic
+impact). Alternative Hypothesis (H₁): Esports earnings in 2019 are
+significantly different from 2020, reflecting the industry’s resilience
+or adaptation during the initial pandemic year.</p>
+<pre class="r"><code># Function for t-tests
+perform_t_test &lt;- function(data, col1, col2) {
+  t_test &lt;- t.test(data[[col1]], data[[col2]], paired = TRUE)
+  tidy_results &lt;- broom::tidy(t_test)
+  return(tidy_results)
+}
+
+# Apply t-tests to year pairs
+t_test_results &lt;- list(
+  `2018 vs 2019` = perform_t_test(paired_data, &quot;Earnings_2018&quot;, &quot;Earnings_2019&quot;),
+  `2019 vs 2020` = perform_t_test(paired_data, &quot;Earnings_2019&quot;, &quot;Earnings_2020&quot;),
+  `2020 vs 2021` = perform_t_test(paired_data, &quot;Earnings_2020&quot;, &quot;Earnings_2021&quot;)
+)
+
+# Combine results into a table
+combined_results &lt;- purrr::map_dfr(t_test_results, ~., .id = &quot;Year Comparison&quot;)
+combined_results %&gt;%
+  kable(digits = 5, caption = &quot;Paired T-Test Results for Earnings Between Years&quot;)</code></pre>
+<table>
+<caption>Paired T-Test Results for Earnings Between Years</caption>
+<colgroup>
+<col width="15%" />
+<col width="9%" />
+<col width="9%" />
+<col width="7%" />
+<col width="9%" />
+<col width="10%" />
+<col width="9%" />
+<col width="13%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Year Comparison</th>
+<th align="right">estimate</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+<th align="right">parameter</th>
+<th align="right">conf.low</th>
+<th align="right">conf.high</th>
+<th align="left">method</th>
+<th align="left">alternative</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">2018 vs 2019</td>
+<td align="right">-545207.8</td>
+<td align="right">-3.36884</td>
+<td align="right">0.00104</td>
+<td align="right">111</td>
+<td align="right">-865901.2</td>
+<td align="right">-224514.4</td>
+<td align="left">Paired t-test</td>
+<td align="left">two.sided</td>
+</tr>
+<tr class="even">
+<td align="left">2019 vs 2020</td>
+<td align="right">772820.2</td>
+<td align="right">3.54599</td>
+<td align="right">0.00057</td>
+<td align="right">111</td>
+<td align="right">340953.8</td>
+<td align="right">1204686.7</td>
+<td align="left">Paired t-test</td>
+<td align="left">two.sided</td>
+</tr>
+<tr class="odd">
+<td align="left">2020 vs 2021</td>
+<td align="right">-984980.7</td>
+<td align="right">-3.17808</td>
+<td align="right">0.00192</td>
+<td align="right">111</td>
+<td align="right">-1599126.3</td>
+<td align="right">-370835.1</td>
+<td align="left">Paired t-test</td>
+<td align="left">two.sided</td>
+</tr>
+</tbody>
+</table>
+<p>The paired t-test results reveal significant year-over-year changes
+in esports earnings between 2018 and 2021. From 2018 to 2019, earnings
+increased significantly, with 2019 showing an average increase of
+$545,207.8 compared to 2018 (<em>t</em> = -3.37, <em>p</em> = 0.00104).
+During the initial year of the COVID-19 pandemic (2019 to 2020),
+earnings surged by an average of $772,820.2 (<em>t</em> = 3.55,
+<em>p</em> = 0.00057), highlighting the industry’s resilience, likely
+driven by a shift to online platforms and increased viewership during
+global lockdowns. However, from 2020 to 2021, earnings declined
+significantly by $984,980.7 on average (<em>t</em> = -3.18, <em>p</em> =
+0.00192), suggesting potential challenges in sustaining growth as the
+pandemic subsided and market dynamics normalized. These findings
+demonstrate the esports industry’s adaptability during the pandemic but
+also highlight the importance of addressing post-pandemic challenges to
+ensure continued growth.</p>
+<p>Summary of Trends Pre-Pandemic Growth (2018 to 2019): Earnings grew
+significantly between 2018 and 2019, reflecting pre-pandemic growth
+trends in the esports industry.</p>
+<p>Pandemic Resilience (2019 to 2020): Earnings increased significantly
+during the pandemic’s first year (2020), demonstrating the esports
+industry’s resilience, likely due to the shift to online platforms and
+increased viewership during global lockdowns.</p>
+<p>Post-Pandemic Decline (2020 to 2021): Earnings declined significantly
+in 2021, indicating possible challenges in maintaining pandemic-driven
+growth as in-person events resumed and market dynamics normalized.</p>
+</div>
+<div id="data-cleaning-and-feature-engineering-for-regression"
+class="section level2">
+<h2>2.1 Data Cleaning and Feature Engineering for regression</h2>
+<p>We clean the data by removing special characters, converting
+variables to numeric types, and creating additional features such as
+game frequency and encoded year.Frequency Represents the number of times
+each game appears in the dataset across years.</p>
+<pre class="r"><code># Clean and process `Game` data
+data &lt;- earnings_topgame %&gt;%
+  mutate(
+    Total_Earnings = as.numeric(gsub(&quot;[^0-9.]&quot;, &quot;&quot;, Total_Earnings)),
+    Total_Players = as.numeric(gsub(&quot;[^0-9]&quot;, &quot;&quot;, Total_Players)),
+    Total_Tournaments = as.numeric(gsub(&quot;[^0-9]&quot;, &quot;&quot;, Total_Tournaments))
+  ) %&gt;%
+  drop_na()  # Remove rows with missing values
+
+# Count occurrences of each game
+game_counts &lt;- data %&gt;%
+  count(Game, name = &quot;Frequency&quot;)
+
+# Ensure both objects are data frames
+data &lt;- as.data.frame(data)
+game_counts &lt;- as.data.frame(game_counts)
+
+# Perform a safe join
+data &lt;- left_join(data, game_counts, by = &quot;Game&quot;)
+
+# Add a numerical encoding for Year
+data &lt;- data %&gt;%
+  mutate(Year = as.numeric(as.factor(Year)))</code></pre>
+</div>
+<div id="model-fitting-with-interaction-terms" class="section level2">
+<h2>2.2 Model Fitting with Interaction Terms</h2>
+<p>We conducted a linear regression analysis to model
+<code>log(Total_Earnings)</code> based on the following predictors:
+<code>Year</code>, <code>Total_Players</code>,
+<code>Total_Tournaments</code>, <code>Frequency</code>, and an
+interaction term (<code>Total_Players:Total_Tournaments</code>). Below
+is a summary of the key findings.</p>
+<pre class="r"><code>data &lt;- data %&gt;%
+  mutate(Total_Earnings = ifelse(Total_Earnings &lt;= 0, 1, Total_Earnings))
+
+data |&gt; 
+  lm(log(Total_Earnings) ~ Year + Total_Players * Total_Tournaments + Frequency, data = _) |&gt; 
+  broom::tidy() |&gt; 
+  knitr::kable(digits = 5)</code></pre>
+<table style="width:100%;">
+<colgroup>
+<col width="46%" />
+<col width="13%" />
+<col width="14%" />
+<col width="14%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">7.06970</td>
+<td align="right">0.22270</td>
+<td align="right">31.74581</td>
+<td align="right">0.00000</td>
+</tr>
+<tr class="even">
+<td align="left">Year</td>
+<td align="right">0.13122</td>
+<td align="right">0.04362</td>
+<td align="right">3.00837</td>
+<td align="right">0.00268</td>
+</tr>
+<tr class="odd">
+<td align="left">Total_Players</td>
+<td align="right">0.00515</td>
+<td align="right">0.00032</td>
+<td align="right">16.12515</td>
+<td align="right">0.00000</td>
+</tr>
+<tr class="even">
+<td align="left">Total_Tournaments</td>
+<td align="right">0.01189</td>
+<td align="right">0.00163</td>
+<td align="right">7.27992</td>
+<td align="right">0.00000</td>
+</tr>
+<tr class="odd">
+<td align="left">Frequency</td>
+<td align="right">0.35932</td>
+<td align="right">0.03911</td>
+<td align="right">9.18637</td>
+<td align="right">0.00000</td>
+</tr>
+<tr class="even">
+<td align="left">Total_Players:Total_Tournaments</td>
+<td align="right">-0.00001</td>
+<td align="right">0.00000</td>
+<td align="right">-12.03489</td>
+<td align="right">0.00000</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>model_interaction &lt;- lm(log(Total_Earnings) ~ Year + Total_Players * Total_Tournaments + Frequency, data = data)
+summary(model_interaction)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = log(Total_Earnings) ~ Year + Total_Players * Total_Tournaments + 
+##     Frequency, data = data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -8.4000 -2.1928  0.0397  2.1297  9.9399 
+## 
+## Coefficients:
+##                                   Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                      7.070e+00  2.227e-01  31.746  &lt; 2e-16 ***
+## Year                             1.312e-01  4.362e-02   3.008  0.00268 ** 
+## Total_Players                    5.150e-03  3.194e-04  16.125  &lt; 2e-16 ***
+## Total_Tournaments                1.189e-02  1.633e-03   7.280 6.04e-13 ***
+## Frequency                        3.593e-01  3.911e-02   9.186  &lt; 2e-16 ***
+## Total_Players:Total_Tournaments -8.052e-06  6.691e-07 -12.035  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.724 on 1194 degrees of freedom
+## Multiple R-squared:  0.4206, Adjusted R-squared:  0.4182 
+## F-statistic: 173.4 on 5 and 1194 DF,  p-value: &lt; 2.2e-16</code></pre>
+<div id="model-interpretation" class="section level4">
+<h4>Model interpretation:</h4>
+<p>All predictors, including the interaction term, are statistically
+significant (p&lt;0.05). Total_Players, Total_Tournaments, and Frequency
+show particularly strong effects. The adjusted R-square value is
+approximately 0.42, indicating that the model explains 42% of the
+variation in log(Total_Earnings).</p>
+</div>
+</div>
+<div id="model-diagnosis" class="section level2">
+<h2>2.3 Model diagnosis</h2>
+<pre class="r"><code># Residual plots
+par(mfrow = c(1, 2))  # Arrange plots in a 1x2 grid
+
+# Residuals vs Fitted
+plot(model_interaction, which = 1, main = &quot;Residuals vs Fitted&quot;)
+
+# Normal Q-Q plot
+plot(model_interaction, which = 2, main = &quot;Normal Q-Q Plot&quot;)</code></pre>
+<p><img src="statistical_analysis_files/figure-html/unnamed-chunk-7-1.png" width="80%" /></p>
+<p>The model provides significant insights into the predictors of
+esports earnings, with key variables such as Total_Players,
+Total_Tournaments, and Frequency showing strong effects. However,
+diagnostic plots reveal potential issues:</p>
+<p>Non-linearity and Heteroscedasticity: Residuals suggest the model may
+not fully capture the relationship between predictors and earnings,
+especially for extreme values. Outliers: Points like 219, 299, and 824
+significantly deviate, indicating the need for robust methods or further
+investigation. Normality: While most residuals align with normality,
+tail deviations highlight areas for improvement.</p>
+<p>To refine the model, feature engineering, non-linear terms, and
+robust methods could enhance predictive performance and better handle
+anomalies.</p>
+</div>
 
 
 

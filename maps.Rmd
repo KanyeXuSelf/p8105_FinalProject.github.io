@@ -1,8 +1,175 @@
 ---
-title: "maps_analysis"
+title: "Maps Dashboard "
 output: 
   html_document:
     toc: true
     toc_float: true
     code_folding: hide
 ---
+```{r, warning = FALSE, message = FALSE}
+
+library(rvest)
+library(dplyr)
+library(tidyverse)
+library(httr)
+library(ggplot2)
+library(tidyr)
+library(maps)
+library(knitr)
+library(viridis)
+library(broom)
+library(plotly)  
+
+knitr::opts_chunk$set(
+  fig.width = 8,  
+  fig.asp = 0.5,     
+  out.width = "90%"   
+)
+
+
+theme_set(theme_minimal() + theme(legend.position = "right"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+
+```
+
+With the data available for all esports players, our analysis focuses specifically on the top 500 players based on their earnings in the last year. The goal is to explore country-level insights by aggregating data for total earnings, player counts, and average earnings per player across different countries.
+
+
+```{r}
+# Data import
+rm(list = ls())
+
+country_overall <- read.csv("data/country_overall.csv")
+esports_top100 <- read.csv("data/esports_earnings_top100_overall.csv")
+top500_365 <- read.csv("data/top500_365.csv")
+earnings_country <- read.csv("data/Earnings_country_2018_2024.csv")
+earnings_topgame <- read.csv("data/Earnings_topgame_2018_2024.csv")
+
+country_overall$Total_Earnings <- as.numeric(gsub("[\\$,]", "", country_overall$Total_Earnings))
+esports_top100$Total_Earnings <- as.numeric(gsub("[\\$,]", "", esports_top100$Total_Earnings))
+top500_365$`Total..Last.365.Days.` <- as.numeric(gsub("[\\$,]", "", top500_365$`Total..Last.365.Days.`))
+earnings_country$Overall_Earnings <- as.numeric(gsub("[\\$,]", "", earnings_country$Overall_Earnings))
+earnings_topgame$Total_Earnings <- as.numeric(gsub("[\\$,]", "", earnings_topgame$Total_Earnings))
+
+#  Prepare map data
+world_map <- map_data("world")
+
+# Extract unique country names from your data
+unique_countries <- unique(top500_365$Country)
+
+# Extract unique country names from the map data
+world_map <- map_data("world")
+map_countries <- unique(world_map$region)
+
+# Identify mismatches
+mismatched_countries <- setdiff(unique_countries, map_countries)
+
+# Print mismatched countries for manual inspection
+# print(mismatched_countries)
+
+top500_365$Country <- recode(top500_365$Country, 
+                             "Taiwan, Republic of China" = "Taiwan",
+                             "United States" = "USA",
+                             "Russian Federation" = "Russia",
+                             "Korea, Republic of" = "South Korea",
+                             "Hong Kong" = "Hong Kong SAR China",
+                             "Moldova, Republic of" = "Moldova",
+                             "United Kingdom" = "UK",
+                             "Iran, Islamic Republic of" = "Iran",
+                             "Macao" = "Macau")
+```
+
+
+## Total Earnings from top 500 players by country
+
+```{r}
+
+# Aggregate data by country
+country_summary <- top500_365 %>%
+  group_by(Country) %>%
+    summarise(
+    Player_Count = n(),  # Count the number of players
+    Total_Earnings = sum(`Total..Last.365.Days.`, na.rm = TRUE),  # Sum up earnings
+    Average_Earnings = Total_Earnings / Player_Count  # Calculate average earnings per player
+  )
+
+
+# Merge map data with the aggregated dataset
+map_data_merged <- world_map %>%
+  left_join(country_summary, by = c("region" = "Country"))  # Match country names
+
+# 绘制交互式地图
+p1 <- ggplot(data = map_data_merged, 
+             aes(x = long, 
+                 y = lat, 
+                 group = group, 
+                 fill = Total_Earnings,
+                 text = paste(
+                   "Country: ", region,
+                   "<br>Player Count: ", Player_Count
+                    )
+                 )
+             ) +
+  geom_polygon(color = "white") +
+  scale_fill_viridis_c(option = "viridis", na.value = "gray90", name = "Total Earnings (USD)") +
+  labs(
+    title = "Total Earnings by Country (Last 365 Days)",
+    x = "", y = ""
+  ) +
+  theme_void() +
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5))
+
+# 转换为交互式
+plotly::ggplotly(p1)
+
+```
+
+## Average Earnings from top 500 players by country
+
+```{r}
+
+# Plot the map for Average Earnings
+p2 <- ggplot(data = map_data_merged, aes(x = long, y = lat, group = group, fill = Average_Earnings, text = paste(
+                   "Country: ", region,
+                   "<br>Player Count: ", Player_Count
+                    ))) +
+  geom_polygon(color = "white") +
+  scale_fill_viridis_c(option = "viridis", na.value = "gray90", name = "Average Earnings (USD)") +
+  labs(
+    title = "Average Earnings by Country (Last 365 Days)",
+    x = "", y = ""
+  ) +
+  theme_void() +
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5))
+
+plotly::ggplotly(p2)
+
+```
+
+## Number of players from top 500 players by country
+
+```{r}
+
+#  Plot heatmap for Player Count with viridis colors
+p3 <- ggplot(data = map_data_merged, aes(x = long, y = lat, group = group, fill = Player_Count, text = paste(
+                   "Country: ", region
+                    ))) +
+  geom_polygon(color = "white") +
+  scale_fill_viridis_c(option = "viridis", na.value = "gray90", name = "Player Count") +
+  labs(
+    title = "Number of Players by Country (Last 365 Days)",
+    x = "", y = ""
+  ) +
+  theme_void() +
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5))
+
+plotly::ggplotly(p3)
+```
+

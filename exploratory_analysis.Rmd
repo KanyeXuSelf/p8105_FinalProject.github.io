@@ -1,5 +1,5 @@
 ---
-title: "Exploratory"
+title: "Exploratory Analysis"
 
 output: 
   html_document:

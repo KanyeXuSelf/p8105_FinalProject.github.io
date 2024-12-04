@@ -1,9 +1,16 @@
 ---
 title: "E-sports........Version1"
 output:
-  html_document
+  html_document:
+    code_folding: hide
 ---
+# Welcome to the E-sports Dashboard
 
-### I have a webpage! Version1
+This dashboard provides insights into the E-sports industry.
 
-And I can put all kinds of stuff on it!
+## Embedded YouTube Video
+
+Below is a brief introduction to the topic. Watch the video for more context.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/KrtAGPUAHD8" frameborder="0" border="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+

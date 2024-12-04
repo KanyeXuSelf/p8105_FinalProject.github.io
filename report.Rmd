@@ -45,7 +45,9 @@ scale_fill_discrete = scale_fill_viridis_d
 
 ## Motivation
 
-This project aims to analyze the evolving landscape of e-sports, focusing on patterns in player earnings and engagement strategies across demographics and game types. 
+This project aims to analyze the evolving landscape of e-sports, focusing on patterns in player earnings and engagement strategies across demographics and game types. Esports has grown rapidly over the past decade, transforming into a billion-dollar industry with significant implications for gaming, sponsorship, and digital entertainment. 
+However, this growth is not evenly distributed across countries, games, or players. Understanding these patterns is critical for industry stakeholders, including game developers, tournament organizers, sponsors, and governments.
+By leveraging data-driven insights, it seeks to inform decisions and strategies for stakeholders across the industry while highlighting the factors that contribute to success and sustainability in competitive gaming.
 
 ## Related work
 

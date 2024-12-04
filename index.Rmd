@@ -1,9 +1,7 @@
 ---
 title: "E-sports........Version1"
 output:
-  html_document:
-    toc: true
-    toc_float: true
+  html_document
 ---
 
 ### I have a webpage! Version1

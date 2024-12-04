@@ -3,14 +3,25 @@ output_dir: "."
 navbar:
   title: "Home"
   right:
-    - text: "About"
-      href: about.html
+    - text: "Maps"
+      href: maps.html
+    - text: "Exploratory Analysis"
+      href: exploratory_analysis.html
+    - text: "Statistical Analysis"
+      href: statistical_analysis.html
+    - text: "Report"
+      href: report.html
     - icon: fa-envelope fa-lg
       href: mailto:<kx2224@cumc.columbia.edu>
     - icon: fa-github fa-lg
       href: http://github.com/KanyeXuSelf/
+
+      
   padding: 0.5rem 1rem;
     
 output:
   html_document:
-    css: vapor.css
+    theme: !expr bslib::bs_theme(
+      version = 5, 
+      bootswatch = "sketchy"
+      )

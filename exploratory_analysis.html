@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Exploratory</title>
+
+<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<link href="site_libs/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-5.3.1/bootstrap.bundle.min.js"></script>
+<script src="site_libs/bs3compat-0.8.0/transition.js"></script>
+<script src="site_libs/bs3compat-0.8.0/tabs.js"></script>
+<script src="site_libs/bs3compat-0.8.0/bs3compat.js"></script>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Home</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="maps.html">Maps</a>
+</li>
+<li>
+  <a href="exploratory_analysis.html">Exploratory Analysis</a>
+</li>
+<li>
+  <a href="statistical_analysis.html">Statistical Analysis</a>
+</li>
+<li>
+  <a href="report.html">Report</a>
+</li>
+<li>
+  <a href="mailto:&lt;kx2224@cumc.columbia.edu&gt;">
+    <span class="fa fa-envelope fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://github.com/KanyeXuSelf/">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Exploratory</h1>
+
+</div>
+
+
+<pre class="r"><code>library(rvest)
+library(dplyr)
+library(tidyverse)
+library(httr)
+library(ggplot2)
+library(tidyr)
+library(maps)
+library(knitr)
+library(viridis)
+library(broom)
+
+knitr::opts_chunk$set(
+  fig.width = 8,      
+  fig.asp = 0.75,     
+  out.width = &quot;80%&quot;   
+)
+
+
+theme_set(theme_minimal() + theme(legend.position = &quot;right&quot;))
+
+options(
+  ggplot2.continuous.colour = &quot;viridis&quot;,
+  ggplot2.continuous.fill = &quot;viridis&quot;
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d</code></pre>
+<pre class="r"><code># Data import
+rm(list = ls())
+
+country_overall &lt;- read.csv(&quot;data/country_overall.csv&quot;)
+esports_top100 &lt;- read.csv(&quot;data/esports_earnings_top100_overall.csv&quot;)
+top500_365 &lt;- read.csv(&quot;data/top500_365.csv&quot;)
+earnings_country &lt;- read.csv(&quot;data/Earnings_country_2018_2024.csv&quot;)
+earnings_topgame &lt;- read.csv(&quot;data/Earnings_topgame_2018_2024.csv&quot;)
+
+country_overall$Total_Earnings &lt;- as.numeric(gsub(&quot;[\\$,]&quot;, &quot;&quot;, country_overall$Total_Earnings))
+esports_top100$Total_Earnings &lt;- as.numeric(gsub(&quot;[\\$,]&quot;, &quot;&quot;, esports_top100$Total_Earnings))
+top500_365$`Total..Last.365.Days.` &lt;- as.numeric(gsub(&quot;[\\$,]&quot;, &quot;&quot;, top500_365$`Total..Last.365.Days.`))
+earnings_country$Overall_Earnings &lt;- as.numeric(gsub(&quot;[\\$,]&quot;, &quot;&quot;, earnings_country$Overall_Earnings))
+earnings_topgame$Total_Earnings &lt;- as.numeric(gsub(&quot;[\\$,]&quot;, &quot;&quot;, earnings_topgame$Total_Earnings))</code></pre>
+<div id="horizontal-analysis" class="section level2">
+<h2>Horizontal Analysis</h2>
+<div id="total-earning-vs.-top-game-earnings" class="section level3">
+<h3>1. Total Earning vs. Top Game Earnings</h3>
+<p>In this section, we analyze the top 10 countries in esports based on
+total earnings, with additional focus on the revenue distribution, the
+dominance of the top game, and the player base. This helps us understand
+the economic concentration in esports and its relationship with player
+participation.</p>
+<p>Revenue Concentration:</p>
+<ul>
+<li>How much of a country’s esports revenue is dominated by a single
+game?</li>
+<li>Are certain countries heavily reliant on one top game for their
+earnings, indicating a concentrated esports ecosystem?</li>
+</ul>
+<p>Cross-Country Differences:</p>
+<ul>
+<li>Do countries differ significantly in their revenue distribution
+between total earnings and top game earnings?</li>
+<li>Are there countries with more diversified revenue sources compared
+to others where a single game dominates?</li>
+</ul>
+<pre class="r"><code># Extract the games with the largest percentage of revenue and their revenue
+top_countries &lt;- country_overall %&gt;%
+  arrange(desc(Total_Earnings)) %&gt;%
+  head(10) %&gt;%
+  mutate(
+    Top_Game_Earnings = as.numeric(gsub(&quot;[\\$,]&quot;, &quot;&quot;, Earnings_From_Top_Game)),
+    Player_Count = as.numeric(gsub(&quot;[^0-9]&quot;, &quot;&quot;, Number_of_Players)),  
+    Top_Game_Percent = round((Top_Game_Earnings / Total_Earnings) * 100, 2)  
+  )
+
+top_countries_long &lt;- top_countries %&gt;%
+  select(Country, Total_Earnings, Top_Game_Earnings, Top_Game) %&gt;%
+  pivot_longer(
+    cols = c(Total_Earnings, Top_Game_Earnings),
+    names_to = &quot;Earnings_Type&quot;,
+    values_to = &quot;Earnings&quot;
+  ) %&gt;%
+  mutate(
+    Earnings_Type = ifelse(Earnings_Type == &quot;Total_Earnings&quot;, &quot;Total Earnings&quot;, &quot;Top Game Earnings&quot;),
+    Game_Label = ifelse(Earnings_Type == &quot;Top Game Earnings&quot;, Top_Game, NA)  # Only add label for top game earnings
+  )
+
+head(top_countries_long)</code></pre>
+<pre><code>## # A tibble: 6 × 5
+##   Country       Top_Game          Earnings_Type       Earnings Game_Label       
+##   &lt;chr&gt;         &lt;chr&gt;             &lt;chr&gt;                  &lt;dbl&gt; &lt;chr&gt;            
+## 1 China         Dota 2            Total Earnings    319027144. &lt;NA&gt;             
+## 2 China         Dota 2            Top Game Earnings  85737773. Dota 2           
+## 3 United States Fortnite          Total Earnings    287370077. &lt;NA&gt;             
+## 4 United States Fortnite          Top Game Earnings  49472180. Fortnite         
+## 5 Korea         League of Legends Total Earnings    151431685. &lt;NA&gt;             
+## 6 Korea         League of Legends Top Game Earnings  38839897. League of Legends</code></pre>
+<p>This bar chart compares the total earnings (yellow) and earnings from
+the top game (red) for the top 10 countries in e-sports from the
+top-performing game in each country.</p>
+<pre class="r"><code>ggplot(top_countries_long, aes(x = reorder(Country, -Earnings), y = Earnings, fill = Earnings_Type)) +
+  geom_bar(stat = &quot;identity&quot;, position = &quot;identity&quot;, alpha = 0.9) +
+  geom_text(
+    aes(label = Game_Label), 
+    position = position_stack(vjust = 0.5),  # Position label in the middle of the &quot;Top Game Earnings&quot; bar
+    na.rm = TRUE, 
+    size = 3, 
+    color = &quot;black&quot;  # Adjust text color if needed
+  ) +
+  coord_flip() +
+  scale_fill_manual(values = c(&quot;blue&quot;, &quot;#ADD8E6&quot;)) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(
+    title = &quot;Top 10 Countries: Total vs. Top Game Earnings&quot;,
+    x = &quot;Country&quot;, y = &quot;Earnings (USD)&quot;, fill = &quot;Earnings Type&quot;
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = &quot;bold&quot;),
+    legend.position = &quot;top&quot;,
+    axis.text.y = element_text(size = 10)
+  )</code></pre>
+<p><img src="exploratory_analysis_files/figure-html/unnamed-chunk-4-1.png" width="80%" /></p>
+<p>From the chart, we can see China leads significantly in both
+categories, with the United States and Korea following. The dominance of
+top games in total earnings varies, with some countries like Korea
+showing a higher reliance on top games, while others like Denmark and
+Brazil have a more diversified earnings distribution.</p>
+<p>The second chart focuses on compare the percentage of revenue
+generated by the top game for each country. It reveals the dependency of
+each country’s esports economy on a single title.</p>
+<pre class="r"><code>ggplot(top_countries, aes(x = reorder(Country, -Top_Game_Percent), y = Top_Game_Percent, fill = Country)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  coord_flip() +
+  scale_fill_viridis_d() +
+  labs(
+    title = &quot;Percentage of Revenue from Top Game&quot;,
+    x = &quot;Country&quot;, y = &quot;Percentage (%)&quot;
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = &quot;bold&quot;),
+    legend.position = &quot;none&quot;,
+    axis.text.y = element_text(size = 10)
+  )</code></pre>
+<p><img src="exploratory_analysis_files/figure-html/unnamed-chunk-5-1.png" width="80%" /></p>
+<p>This visualization provides a bubble chart to analyze the
+relationship between the number of esports players and their total
+earnings for each country.</p>
+<pre class="r"><code>ggplot(top_countries, aes(x = reorder(Country, -Player_Count), y = Player_Count, size = Total_Earnings, color = Player_Count)) +
+  geom_point(alpha = 0.7) +
+  coord_flip() +
+  scale_y_continuous(labels = scales::comma) +
+  scale_size_continuous(labels = scales::comma) +
+  scale_color_viridis_c(option = &quot;viridis&quot;) + 
+  labs(
+    title = &quot;Total Players by Country (Bubble Size = Total Earnings)&quot;,
+    x = &quot;Country&quot;, y = &quot;Number of Players&quot;,
+    size = &quot;Total Earnings (USD)&quot;,
+    color = &quot;Player Count&quot;  
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = &quot;bold&quot;),
+    axis.text.y = element_text(size = 10),
+    legend.position = &quot;bottom&quot; 
+  )</code></pre>
+<p><img src="exploratory_analysis_files/figure-html/unnamed-chunk-6-1.png" width="80%" /></p>
+</div>
+<div id="top-players-analysis" class="section level3">
+<h3>2. Top Players analysis</h3>
+<p>In this section, we analyze <strong>individual player
+performance</strong> based on the top players and top 500 players’
+earnings data. This provides insights into individual dominance in
+esports and the geographic distribution of esports performance.</p>
+<p>This provide us a overview of top 10 players and their earnings</p>
+<pre class="r"><code># Extract the top 10 players
+top_players &lt;- esports_top100 %&gt;%
+  arrange(desc(Total_Earnings)) %&gt;%
+  head(10)
+
+# Create a bar chart for the top 10 players by earnings
+ggplot(top_players, aes(x = reorder(Player_Name, Total_Earnings), y = Total_Earnings, fill = Highest_Paying_Game)) +
+  geom_bar(stat = &quot;identity&quot;, alpha = 0.8) +  # Add alpha for lighter colors
+  geom_text(
+    aes(label = paste0(&quot;ID: &quot;, Player_ID, &quot;\n$&quot;, formatC(Total_Earnings, format = &quot;f&quot;, big.mark = &quot;,&quot;))),
+    hjust = 1, size = 3, color = &quot;white&quot;  # Set text color to white
+  ) +  # Add Player ID and earnings as labels
+  coord_flip() +
+  scale_fill_viridis_d(option = &quot;viridis&quot;, name = &quot;Top Game&quot;, begin = 0.3, end = 0.8) + 
+  labs(
+    title = &quot;Top 10 Players by Total Earnings&quot;,
+    x = &quot;Player Name&quot;,
+    y = &quot;Total Earnings (USD)&quot;,
+    fill = &quot;Top Game&quot;
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = &quot;bold&quot;),
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 10)
+  )</code></pre>
+<p><img src="exploratory_analysis_files/figure-html/unnamed-chunk-7-1.png" width="80%" /></p>
+<p>All of the top 10 highest-earning players have earned their fortunes
+from Dota 2, with Johan Sundstein (N0tail) leading the list at over $7
+million, highlighting the game’s massive prize pools and dominance in
+esports earnings.</p>
+<p>Then we expand our focus to top 500 players</p>
+<pre class="r"><code># Summary table for top 500
+country_summary &lt;- top500_365 %&gt;%
+  group_by(Country) %&gt;%
+  summarise(
+    Player_Count = n(),  # Count the number of players
+    Total_Earnings = sum(`Total..Last.365.Days.`, na.rm = TRUE)  # Sum up earnings
+  ) %&gt;%
+  arrange(desc(Player_Count))  # Sort by the number of players
+
+
+kable(
+  country_summary %&gt;%
+    slice_max(Player_Count, n = 10),  
+  col.names = c(&quot;Country&quot;, &quot;Player Count&quot;, &quot;Total Earnings (USD)&quot;),
+  caption = &quot;Top 10 Countries: Player Count and Total Earnings&quot;
+)</code></pre>
+<table>
+<caption>Top 10 Countries: Player Count and Total Earnings</caption>
+<thead>
+<tr class="header">
+<th align="left">Country</th>
+<th align="right">Player Count</th>
+<th align="right">Total Earnings (USD)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">China</td>
+<td align="right">136</td>
+<td align="right">31168889.3</td>
+</tr>
+<tr class="even">
+<td align="left">United States</td>
+<td align="right">62</td>
+<td align="right">10838587.1</td>
+</tr>
+<tr class="odd">
+<td align="left">Korea, Republic of</td>
+<td align="right">40</td>
+<td align="right">5003341.9</td>
+</tr>
+<tr class="even">
+<td align="left">Brazil</td>
+<td align="right">30</td>
+<td align="right">4181703.0</td>
+</tr>
+<tr class="odd">
+<td align="left">Russian Federation</td>
+<td align="right">30</td>
+<td align="right">6735118.5</td>
+</tr>
+<tr class="even">
+<td align="left">Malaysia</td>
+<td align="right">13</td>
+<td align="right">1897397.8</td>
+</tr>
+<tr class="odd">
+<td align="left">France</td>
+<td align="right">12</td>
+<td align="right">2589004.2</td>
+</tr>
+<tr class="even">
+<td align="left">Germany</td>
+<td align="right">10</td>
+<td align="right">1616827.3</td>
+</tr>
+<tr class="odd">
+<td align="left">Ukraine</td>
+<td align="right">10</td>
+<td align="right">1984435.7</td>
+</tr>
+<tr class="even">
+<td align="left">Denmark</td>
+<td align="right">9</td>
+<td align="right">2475412.2</td>
+</tr>
+<tr class="odd">
+<td align="left">Mongolia</td>
+<td align="right">9</td>
+<td align="right">1551713.2</td>
+</tr>
+<tr class="even">
+<td align="left">Thailand</td>
+<td align="right">9</td>
+<td align="right">725147.5</td>
+</tr>
+<tr class="odd">
+<td align="left">United Kingdom</td>
+<td align="right">9</td>
+<td align="right">1268504.9</td>
+</tr>
+</tbody>
+</table>
+<p>The distribution of top 500 players by country</p>
+<pre class="r"><code># Filter small values and group as &quot;Other&quot;
+threshold &lt;- 10  # Define a threshold for minimum player count
+country_summary1 &lt;- country_summary %&gt;%
+  mutate(
+    Country = ifelse(Player_Count &lt;= threshold, &quot;Other&quot;, Country)  # Group smaller countries as &quot;Other&quot;
+  ) %&gt;%
+  group_by(Country) %&gt;%
+  summarise(
+    Player_Count = sum(Player_Count),  # Sum counts for &quot;Other&quot;
+    .groups = &quot;drop&quot;
+  )
+
+# Create a pie chart with viridis colors
+ggplot(country_summary1, aes(x = &quot;&quot;, y = Player_Count, fill = Country)) +
+  geom_bar(stat = &quot;identity&quot;, width = 1) +
+  coord_polar(&quot;y&quot;, start = 0) +
+  scale_fill_viridis_d(option = &quot;plasma&quot;, name = &quot;Country&quot;) +  # Use the &quot;plasma&quot; palette from viridis
+  labs(
+    title = &quot;Top 500 Players by Country (Proportion)&quot;,
+    x = NULL,
+    y = NULL
+  ) +
+  theme_void() +  # Remove grid and axis elements
+  theme(
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5),
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 10)
+  )</code></pre>
+<p><img src="exploratory_analysis_files/figure-html/unnamed-chunk-9-1.png" width="80%" /></p>
+<p>The distribution of top 500 players earnings by country</p>
+<pre class="r"><code># Filter small values and group as &quot;Other&quot;
+threshold &lt;- 2e6  # Define a threshold for minimum total earnings
+country_summary2 &lt;- country_summary %&gt;%
+  mutate(
+    Country = ifelse(Total_Earnings &lt;= threshold, &quot;Other&quot;, Country)  # Group smaller countries as &quot;Other&quot;
+  ) %&gt;%
+  group_by(Country) %&gt;%
+  summarise(
+    Total_Earnings = sum(Total_Earnings),  # Sum earnings for &quot;Other&quot;
+    .groups = &quot;drop&quot;
+  )
+
+# Create a pie chart with viridis colors
+ggplot(country_summary2, aes(x = &quot;&quot;, y = Total_Earnings, fill = Country)) +
+  geom_bar(stat = &quot;identity&quot;, width = 1) +
+  coord_polar(&quot;y&quot;, start = 0) +
+  scale_fill_viridis_d(option = &quot;plasma&quot;, name = &quot;Country&quot;) +  # Use the &quot;plasma&quot; palette from viridis
+  labs(
+    title = &quot;Total Earnings by Country (Top 500 Players)&quot;,
+    x = NULL,
+    y = NULL
+  ) +
+  theme_void() +  # Remove grid and axis elements
+  theme(
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5),
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 10)
+  )</code></pre>
+<p><img src="exploratory_analysis_files/figure-html/unnamed-chunk-10-1.png" width="80%" /></p>
+<ul>
+<li>From Top 500 Players by Country (Proportion), <strong>United States,
+China, and South Korea</strong> dominate in player representation,
+reflecting strong esports ecosystems.The “Other” category includes
+countries with fewer top players, highlighting the concentration of
+talent in key regions.</li>
+<li>From Total Earnings by Country (Top 500 Players),
+<strong>China</strong> leads in total earnings, followed by the
+<strong>United States</strong> and <strong>South Korea</strong>,
+showcasing financial dominance. Smaller countries like
+<strong>Denmark</strong> and <strong>Ukraine</strong> excel in earnings
+despite fewer players, indicating high efficiency and performance.</li>
+<li>Esports talent and earnings are concentrated in a few regions, with
+smaller countries showing strong player efficiency.</li>
+</ul>
+<p>The distribution of top players earning by countries</p>
+<pre class="r"><code># Clean and prepare data
+top500_365 &lt;- top500_365 %&gt;%
+  mutate(
+    Total_Earnings = as.numeric(gsub(&quot;[^0-9.]&quot;, &quot;&quot;, Total..Last.365.Days.)),  # Clean earnings column
+    Country = as.factor(Country)  # Ensure Country is a factor for grouping
+  ) %&gt;%
+  drop_na(Total_Earnings)  # Remove rows with missing earnings
+
+# Filter countries with more than 10 players
+filtered_countries &lt;- top500_365 %&gt;%
+  group_by(Country) %&gt;%
+  filter(n() &gt; 5)  # Keep only countries with more than 10 players
+
+# Create the boxplot
+ggplot(filtered_countries, aes(x = reorder(Country, -Total_Earnings, median), y = log(Total_Earnings), fill = Country)) +
+  geom_boxplot(outlier.color = &quot;red&quot;, outlier.shape = 16, outlier.size = 1.5, alpha = 0.7) +
+  labs(
+    title = &quot;Distribution of Player Earnings by Country (Log Scale)&quot;,
+    x = &quot;Country&quot;,
+    y = &quot;Log Total Earnings (USD)&quot;
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = &quot;none&quot;,
+    plot.title = element_text(size = 16, face = &quot;bold&quot;)
+  )</code></pre>
+<p><img src="exploratory_analysis_files/figure-html/unnamed-chunk-11-1.png" width="80%" /></p>
+</div>
+</div>
+<div id="longitudinal-comparison" class="section level2">
+<h2>Longitudinal comparison</h2>
+<p>After examining horizontal comparisons, we now turn to the
+<strong>longitudinal analysis</strong> from a time perspective. This
+section investigates the trends in total earnings across years,
+top-performing countries, and the most popular games from <strong>2018
+to 2024</strong>.</p>
+<div id="overall-earnings-trend-2018-2024" class="section level3">
+<h3>1. Overall Earnings Trend (2018-2024)</h3>
+<ul>
+<li><strong>Objective</strong>: To understand the overall growth and
+decline of esports earnings over time.</li>
+<li><strong>Key Findings</strong>:
+<ul>
+<li>Total earnings increased significantly from <strong>2018 to
+2019</strong>, suggesting growing interest and investment in the esports
+industry.</li>
+<li>A sharp decline in <strong>2020</strong> aligns with the global
+COVID-19 pandemic, which disrupted live tournaments—a major revenue
+source.</li>
+<li>Earnings rebounded strongly in <strong>2021</strong>, reaching the
+highest point in the observed period, likely due to adaptation to
+<strong>online tournaments</strong> and increased <strong>digital
+engagement</strong>.</li>
+<li>From <strong>2022 to 2024</strong>, there was a steady decline in
+total earnings, possibly reflecting:
+<ul>
+<li>Market saturation.</li>
+<li>Reduced growth in audience engagement or sponsorship.</li>
+</ul></li>
+</ul></li>
+</ul>
+<pre class="r"><code># Summarize yearly earnings
+yearly_earnings &lt;- earnings_country %&gt;%
+  group_by(Year) %&gt;%
+  summarize(Total_Earnings = sum(Overall_Earnings, na.rm = TRUE))
+head(yearly_earnings)</code></pre>
+<pre><code>## # A tibble: 6 × 2
+##    Year Total_Earnings
+##   &lt;int&gt;          &lt;dbl&gt;
+## 1  2018     170216796.
+## 2  2019     231304196.
+## 3  2020     144918094.
+## 4  2021     255439856.
+## 5  2022     239756324.
+## 6  2023     229117554.</code></pre>
+<pre class="r"><code># Plot the trend line
+ggplot(yearly_earnings, aes(x = Year, y = Total_Earnings)) +
+  geom_line(color = &quot;#ADD8E6&quot;, size = 1) +
+  geom_point(color = &quot;blue&quot;, size = 2) +
+  labs(
+    title = &quot;Total Earnings Trends Over Time (2018-2024)&quot;,
+    x = &quot;Year&quot;,
+    y = &quot;Total Earnings (USD)&quot;
+  ) +
+  theme_minimal()</code></pre>
+<p><img src="exploratory_analysis_files/figure-html/unnamed-chunk-12-1.png" width="80%" /></p>
+</div>
+<div id="top-10-countries-earnings-trend-2018-2024"
+class="section level3">
+<h3>2. Top 10 Countries Earnings Trend (2018-2024)</h3>
+<ul>
+<li><strong>Objective</strong>: To analyze earnings trends for the top
+10 countries in total earnings over the observed years.</li>
+<li><strong>Findings</strong>:
+<ul>
+<li><strong>China and the United States</strong> are clear leaders in
+esports earnings, with significant peaks in <strong>2021</strong>.</li>
+<li><strong>Korea</strong>, <strong>United Kingdom</strong>, and
+<strong>Russian Federation</strong> demonstrate moderate
+performance.</li>
+<li>The <strong>COVID-19 pandemic in 2020</strong> caused noticeable
+disruptions, but most countries recovered in <strong>2021</strong>
+before entering a gradual decline through <strong>2024</strong>.</li>
+</ul></li>
+</ul>
+<pre class="r"><code># Step 1: Summarize yearly earnings by country
+yearly_country_earnings &lt;- earnings_country %&gt;%
+  group_by(Year, Countries) %&gt;%
+  summarize(Total_Earnings = sum(Overall_Earnings, na.rm = TRUE), .groups = &quot;drop&quot;)
+
+head(yearly_country_earnings)</code></pre>
+<pre><code>## # A tibble: 6 × 3
+##    Year Countries   Total_Earnings
+##   &lt;int&gt; &lt;chr&gt;                &lt;dbl&gt;
+## 1  2018 Afghanistan          3000 
+## 2  2018 Albania              1347.
+## 3  2018 Algeria             19249.
+## 4  2018 Argentina          427931.
+## 5  2018 Armenia            912606.
+## 6  2018 Australia         4248987.</code></pre>
+<pre class="r"><code># Step 2: Identify the top 10 countries by total earnings
+top_countries &lt;- yearly_country_earnings %&gt;%
+  group_by(Countries) %&gt;%
+  summarize(Total_Earnings = sum(Total_Earnings, na.rm = TRUE), .groups = &quot;drop&quot;) %&gt;%
+  arrange(desc(Total_Earnings)) %&gt;%
+  slice_head(n = 10)  # Select the top 10 countries
+
+# Step 3: Filter the data for only the top 10 countries
+top_country_trends &lt;- yearly_country_earnings %&gt;%
+  filter(Countries %in% top_countries$Countries)
+
+# Step 4: Plot yearly trends for the top 10 countries with a consistent color theme
+ggplot(top_country_trends, aes(x = Year, y = Total_Earnings, color = Countries)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  scale_color_viridis_d(option = &quot;plasma&quot;, name = &quot;Country&quot;) +  # Use the &quot;plasma&quot; palette from viridis
+  labs(
+    title = &quot;Yearly Earnings Trends for Top 10 Countries (2018-2024)&quot;,
+    x = &quot;Year&quot;,
+    y = &quot;Total Earnings (USD)&quot;,
+    color = &quot;Country&quot;
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = &quot;bold&quot;),
+    legend.position = &quot;right&quot;,
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 10),
+    legend.key.size = unit(0.6, &quot;cm&quot;)  # Adjust legend key size for better fit
+  )</code></pre>
+<p><img src="exploratory_analysis_files/figure-html/unnamed-chunk-13-1.png" width="80%" /></p>
+</div>
+<div id="top-10-games-earnings-trend-2018-2024" class="section level3">
+<h3>3. Top 10 Games Earnings Trend (2018-2024)</h3>
+<ul>
+<li><strong>Objective</strong>: To explore trends in earnings for the
+top 10 games, identified by their total combined earnings from 2018 to
+2024.</li>
+<li><strong>Key Findings</strong>:
+<ul>
+<li><strong>Dota 2</strong> consistently dominates the earnings chart:
+<ul>
+<li>Significant peak in <strong>2018</strong> (~$80 million).</li>
+<li>Remains a top contributor throughout the years despite
+fluctuations.</li>
+</ul></li>
+<li><strong>Fortnite</strong> saw a sharp rise post-2018 and maintained
+high earnings, competing closely with Dota 2 between
+<strong>2020-2022</strong>.</li>
+<li><strong>Counter-Strike</strong> shows steady growth, while
+<strong>League of Legends</strong> demonstrates smaller but stable
+earnings.</li>
+<li><strong>Valorant</strong> and <strong>PUBG Mobile</strong>
+(PLAYERUNKNOWN’S BATTLEGROUNDS) exhibit growth after
+<strong>2020</strong>, reflecting increasing popularity.</li>
+<li><strong>Rocket League</strong> and <strong>Rainbow Six
+Siege</strong> show declining trends post-2022, suggesting reduced
+popularity or activity in competitive scenes.</li>
+</ul></li>
+</ul>
+<pre class="r"><code># top 10 games
+top_games &lt;- earnings_topgame %&gt;%
+  group_by(Game) %&gt;%
+  summarize(Total_Earnings = sum(Total_Earnings)) %&gt;%
+  arrange(desc(Total_Earnings)) %&gt;%
+  head(10) %&gt;%
+  pull(Game)
+
+top_game_trends &lt;- earnings_topgame %&gt;%
+  filter(Game %in% top_games)
+
+# plot
+ggplot(top_game_trends, aes(x = Year, y = Total_Earnings, color = Game)) +
+  geom_line(size = 1) +  
+  geom_point(size = 1.5) +  
+  scale_color_viridis_d(option = &quot;plasma&quot;, name = &quot;Game&quot;) +  # Use a high-contrast &quot;plasma&quot; palette
+  labs(
+    title = &quot;Trends for Top 10 Games (2018-2024)&quot;,
+    x = &quot;Year&quot;,
+    y = &quot;Total Earnings (USD)&quot;
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5),
+    legend.position = &quot;right&quot;,
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 10),
+    axis.title = element_text(size = 12),
+    axis.text = element_text(size = 10)
+  )</code></pre>
+<p><img src="exploratory_analysis_files/figure-html/unnamed-chunk-14-1.png" width="80%" /></p>
+</div>
+<div id="overall-observations" class="section level3">
+<h3>4. Overall Observations</h3>
+<ul>
+<li><strong>Pandemic Impact (2020)</strong>:
+<ul>
+<li>Earnings across most games and countries declined significantly due
+to disruptions in live events caused by the COVID-19 pandemic.</li>
+<li>However, certain games and regions adapted quickly with online
+tournaments, showcasing the resilience of the esports market.</li>
+</ul></li>
+<li><strong>Post-2020 Recovery</strong>:
+<ul>
+<li>Many games and countries saw earnings rebound strongly in
+<strong>2021</strong>.</li>
+<li>Despite the peak, the industry faced steady declines in subsequent
+years, highlighting challenges such as:
+<ul>
+<li>Market saturation.</li>
+<li>Evolving audience preferences.</li>
+<li>Shifting sponsorship dynamics.</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<div id="visualization-summary" class="section level3">
+<h3>5. Visualization Summary</h3>
+<ol style="list-style-type: decimal">
+<li><strong>Overall Earnings Trend</strong>:
+<ul>
+<li>Highlights year-over-year fluctuations in total earnings across all
+countries.</li>
+<li>Captures significant events like the pandemic’s impact and the
+subsequent recovery.</li>
+</ul></li>
+<li><strong>Top Countries Trend</strong>:
+<ul>
+<li>Tracks the earnings of the top 10 countries, showcasing regional
+performance variations.</li>
+</ul></li>
+<li><strong>Top Games Trend</strong>:
+<ul>
+<li>Focuses on the top 10 games by total earnings, analyzing their
+growth, decline, and market relevance over time.</li>
+</ul></li>
+</ol>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

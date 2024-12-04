@@ -9,6 +9,8 @@ navbar:
       href: mailto:<kx2224@cumc.columbia.edu>
     - icon: fa-github fa-lg
       href: http://github.com/KanyeXuSelf/
+  padding: 0.5rem 1rem;
+    
 output:
   html_document:
     css: https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/vapor/bootstrap.min.css

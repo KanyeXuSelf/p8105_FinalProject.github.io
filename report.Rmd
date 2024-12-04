@@ -17,6 +17,7 @@ library(tidyr)
 library(maps)
 library(knitr)
 library(viridis)
+library(broom)
 
 knitr::opts_chunk$set(
   fig.width = 8,      
@@ -364,16 +365,16 @@ top_countries <- country_overall %>%
     Top_Game_Percent = round((Top_Game_Earnings / Total_Earnings) * 100, 2)  
   )
 
-# convert to long format
 top_countries_long <- top_countries %>%
-  select(Country, Total_Earnings, Top_Game_Earnings) %>%
+  select(Country, Total_Earnings, Top_Game_Earnings, Top_Game) %>%
   pivot_longer(
     cols = c(Total_Earnings, Top_Game_Earnings),
     names_to = "Earnings_Type",
     values_to = "Earnings"
   ) %>%
   mutate(
-    Earnings_Type = ifelse(Earnings_Type == "Total_Earnings", "Total Earnings", "Top Game Earnings")
+    Earnings_Type = ifelse(Earnings_Type == "Total_Earnings", "Total Earnings", "Top Game Earnings"),
+    Game_Label = ifelse(Earnings_Type == "Top Game Earnings", Top_Game, NA)  # Only add label for top game earnings
   )
 
 head(top_countries_long)
@@ -385,6 +386,13 @@ This bar chart compares the total earnings (yellow) and earnings from the top ga
 
 ggplot(top_countries_long, aes(x = reorder(Country, -Earnings), y = Earnings, fill = Earnings_Type)) +
   geom_bar(stat = "identity", position = "identity", alpha = 0.9) +
+  geom_text(
+    aes(label = Game_Label), 
+    position = position_stack(vjust = 0.5),  # Position label in the middle of the "Top Game Earnings" bar
+    na.rm = TRUE, 
+    size = 3, 
+    color = "black"  # Adjust text color if needed
+  ) +
   coord_flip() +
   scale_fill_manual(values = c("blue", "#ADD8E6")) +
   scale_y_continuous(labels = scales::comma) +
@@ -399,7 +407,10 @@ ggplot(top_countries_long, aes(x = reorder(Country, -Earnings), y = Earnings, fi
     axis.text.y = element_text(size = 10)
   )
 
+
+
 ```
+
 From the chart, we can see China leads significantly in both categories, with the United States and Korea following. The dominance of top games in total earnings varies, with some countries like Korea showing a higher reliance on top games, while others like Denmark and Brazil have a more diversified earnings distribution.
 
 
@@ -489,6 +500,7 @@ ggplot(top_players, aes(x = reorder(Player_Name, Total_Earnings), y = Total_Earn
 
 
 ```
+
 All of the top 10 highest-earning players have earned their fortunes from Dota 2, with Johan Sundstein (N0tail) leading the list at over $7 million, highlighting the game's massive prize pools and dominance in esports earnings.
 
 Then we expand our focus to top 500 players
@@ -917,9 +929,68 @@ ggplot(data = map_data_merged, aes(x = long, y = lat, group = group, fill = Play
 
 ## Statistical Analysis
 
-In this section, we conduct statistical modeling and analysis to explore factors that influence total earnings in esports games. The analysis involves data cleaning, linear regression with interaction terms, residual diagnostics, and prediction visualization.
+In this section, we conduct statistical modeling and analysis to investigate factors influencing total earnings in esports games. The analysis begins with t-tests to examine differences in earnings across countries over multiple years, assessing whether the industry demonstrated resilience during the COVID-19 pandemic by rebounding after a significant decline in 2020. This is followed by linear regression with interaction terms, residual diagnostics, and prediction visualization to further explore the factors impacting total earnings.
 
-### 1. Data Cleaning and Feature Engineering
+### 1.1 Data Cleaning and Feature Engineering for t-test
+```{r}
+paired_data <- reduce(
+  list(
+    earnings_country %>% filter(Year == 2018) %>% select(Countries, Earnings_2018 = Overall_Earnings),
+    earnings_country %>% filter(Year == 2019) %>% select(Countries, Earnings_2019 = Overall_Earnings),
+    earnings_country %>% filter(Year == 2020) %>% select(Countries, Earnings_2020 = Overall_Earnings),
+    earnings_country %>% filter(Year == 2021) %>% select(Countries, Earnings_2021 = Overall_Earnings)
+  ),
+  inner_join,
+  by = "Countries"
+)
+
+```
+
+### 1.2 Paired T-Tests
+Null Hypothesis (H₀): There is no significant difference in esports earnings between 2018 (pre-pandemic) and 2019 (pandemic onset).
+Alternative Hypothesis (H₁): Esports earnings in 2018 are significantly different from 2019, reflecting the impact of the pandemic.
+
+Null Hypothesis (H₀): There is no significant difference in esports earnings between 2020 (pandemic onset) and 2021 (recovery phase).
+Alternative Hypothesis (H₁): Esports earnings in 2021 are significantly different from 2020, indicating a recovery or continued decline.
+
+Null Hypothesis (H₀): There is no significant difference in esports earnings between 2019 (pandemic onset) and 2020 (initial pandemic impact).
+Alternative Hypothesis (H₁): Esports earnings in 2019 are significantly different from 2020, reflecting the industry's resilience or adaptation during the initial pandemic year.
+```{r}
+# Function for t-tests
+perform_t_test <- function(data, col1, col2) {
+  t_test <- t.test(data[[col1]], data[[col2]], paired = TRUE)
+  tidy_results <- broom::tidy(t_test)
+  return(tidy_results)
+}
+
+# Apply t-tests to year pairs
+t_test_results <- list(
+  `2018 vs 2019` = perform_t_test(paired_data, "Earnings_2018", "Earnings_2019"),
+  `2019 vs 2020` = perform_t_test(paired_data, "Earnings_2019", "Earnings_2020"),
+  `2020 vs 2021` = perform_t_test(paired_data, "Earnings_2020", "Earnings_2021")
+)
+
+# Combine results into a table
+combined_results <- purrr::map_dfr(t_test_results, ~., .id = "Year Comparison")
+combined_results %>%
+  kable(digits = 5, caption = "Paired T-Test Results for Earnings Between Years")
+
+```
+The paired t-test results reveal significant year-over-year changes in esports earnings between 2018 and 2021. From 2018 to 2019, earnings increased significantly, with 2019 showing an average increase of \$545,207.8 compared to 2018 (*t* = -3.37, *p* = 0.00104). During the initial year of the COVID-19 pandemic (2019 to 2020), earnings surged by an average of \$772,820.2 (*t* = 3.55, *p* = 0.00057), highlighting the industry’s resilience, likely driven by a shift to online platforms and increased viewership during global lockdowns. However, from 2020 to 2021, earnings declined significantly by \$984,980.7 on average (*t* = -3.18, *p* = 0.00192), suggesting potential challenges in sustaining growth as the pandemic subsided and market dynamics normalized. These findings demonstrate the esports industry’s adaptability during the pandemic but also highlight the importance of addressing post-pandemic challenges to ensure continued growth.
+
+Summary of Trends
+Pre-Pandemic Growth (2018 to 2019):
+Earnings grew significantly between 2018 and 2019, reflecting pre-pandemic growth trends in the esports industry.
+
+Pandemic Resilience (2019 to 2020):
+Earnings increased significantly during the pandemic's first year (2020), demonstrating the esports industry's resilience, likely due to the shift to online platforms and increased viewership during global lockdowns.
+
+Post-Pandemic Decline (2020 to 2021):
+Earnings declined significantly in 2021, indicating possible challenges in maintaining pandemic-driven growth as in-person events resumed and market dynamics normalized.
+
+
+
+### 2.1 Data Cleaning and Feature Engineering for regression
 
 We clean the data by removing special characters, converting variables to numeric types, and creating additional features such as game frequency and encoded year.Frequency Represents the number of times each game appears in the dataset across years.
 
@@ -952,7 +1023,7 @@ data <- data %>%
 
 ```
 
-### 2. Model Fitting with Interaction Terms
+### 2.2 Model Fitting with Interaction Terms
 
 We conducted a linear regression analysis to model `log(Total_Earnings)` based on the following predictors: 
 `Year`, `Total_Players`, `Total_Tournaments`, `Frequency`, and an interaction term (`Total_Players:Total_Tournaments`). Below is a summary of the key findings.
@@ -980,7 +1051,7 @@ All predictors, including the interaction term, are statistically significant (p
 Total_Players, Total_Tournaments, and Frequency show particularly strong effects.
 The adjusted R-square value is approximately 0.42, indicating that the model explains 42% of the variation in log(Total_Earnings).
 
-### 3. Model diagnosis
+### 2.3 Model diagnosis
 
 ```{r}
 

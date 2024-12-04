@@ -4,7 +4,7 @@ output:
   html_document
 ---
 
-## Play by Numbers: Esports Trends Unveiled
+## Overview
 
 
 In this project, we delves into the dynamic and fast-growing world of e-sports, analyzing trends in player earnings, regional performance, and game-level engagement. By examining data from 2018 to 2024, we aim to uncover how the industry has evolved, the impact of external factors like the COVID-19 pandemic, and the strategies that drive success for players, games, and countries. Our insights focus on both high-level trends and granular details to better understand the ecosystem shaping competitive gaming today. 

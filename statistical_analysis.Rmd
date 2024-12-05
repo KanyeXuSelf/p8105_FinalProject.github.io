@@ -23,7 +23,7 @@ library(broom)
 
 knitr::opts_chunk$set(
   fig.width = 8,      
-  fig.asp = 0.75,     
+  fig.asp = 0.6,     
   out.width = "80%"   
 )
 
@@ -58,8 +58,8 @@ In this section, we conduct statistical modeling and analysis to investigate fac
 ## 1.1 Data Cleaning and Feature Engineering for t-test
 ## We consolidate earnings data across four years (2018, 2019, 2020, and 2021) by performing an iterative inner join on the Countries column. 
    Each year’s data is first filtered, renamed for clarity (Earnings_<Year>), and included in the merge process. 
-   The resulting dataset aligns earnings for the same countries across all years, ensuring only countries present in all four years are included. 
-   This cleaned and structured data enables paired comparisons and year-over-year analysis.
+   The resulting dataset aligns earnings for the same countries across all years, ensuring only countries present in all four years are included. This cleaned and structured data enables paired comparisons and year-over-year analysis.
+   
 ```{r}
 paired_data <- reduce(
   list(

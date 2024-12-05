@@ -42,12 +42,14 @@ scale_fill_discrete = scale_fill_viridis_d
 \
 **Project Members:** Xun Sun (xs2569), Xinghao Qiao (xq2241), Huachen Shan (hs3478), Kanye Xu (kx2224), Fangchi Lu (fl2714) 
 \
+
 ## Motivation
 \
 This project aims to analyze the evolving landscape of e-sports, focusing on patterns in player earnings and engagement strategies across demographics and game types. 
 \
 The motivation for this project is to gain a deeper understanding of the global esports industry by analyzing the financial performance and player representation across countries, games, and time. Esports has grown rapidly over the past decade, transforming into a billion-dollar industry with significant implications for gaming, sponsorship, and digital entertainment. However, this growth is not evenly distributed across countries, games, or players. Understanding these patterns is critical for industry stakeholders, including game developers, tournament organizers, sponsors, and governments.
 \
+
 ## Related work
 \
 We are all graduate students in Mailman’s Biostatistics Department, and we wanted to do a positive project that combined our shared love of e-Sports gaming. E-games are becoming an increasingly important part of our lives nowadays, not only as a pastime making a break from the stress of our schedules, but also as a livelihood for some. As this may be a common situation in the world, we were inspired to explore the story behind the e-Sports industry.

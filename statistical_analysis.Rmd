@@ -56,6 +56,10 @@ earnings_topgame$Total_Earnings <- as.numeric(gsub("[\\$,]", "", earnings_topgam
 In this section, we conduct statistical modeling and analysis to investigate factors influencing total earnings in esports games. The analysis begins with t-tests to examine differences in earnings across countries over multiple years, assessing whether the industry demonstrated resilience during the COVID-19 pandemic by rebounding after a significant decline in 2020. This is followed by linear regression with interaction terms, residual diagnostics, and prediction visualization to further explore the factors impacting total earnings.
 
 ## 1.1 Data Cleaning and Feature Engineering for t-test
+## We consolidate earnings data across four years (2018, 2019, 2020, and 2021) by performing an iterative inner join on the Countries column. 
+## Each year’s data is first filtered, renamed for clarity (Earnings_<Year>), and included in the merge process. 
+## The resulting dataset aligns earnings for the same countries across all years, ensuring only countries present in all four years are included. 
+## This cleaned and structured data enables paired comparisons and year-over-year analysis.
 ```{r}
 paired_data <- reduce(
   list(

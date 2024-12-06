@@ -104,7 +104,19 @@ combined_results %>%
   kable(digits = 5, caption = "Paired T-Test Results for Earnings Between Years")
 
 ```
-The paired t-test results reveal significant year-over-year changes in esports earnings between 2018 and 2021. From 2018 to 2019, earnings increased significantly, with 2019 showing an average increase of \$545,207.8 compared to 2018 (*t* = -3.37, *p* = 0.00104). During the initial year of the COVID-19 pandemic (2019 to 2020), earnings surged by an average of \$772,820.2 (*t* = 3.55, *p* = 0.00057), highlighting the industry’s resilience, likely driven by a shift to online platforms and increased viewership during global lockdowns. However, from 2020 to 2021, earnings declined significantly by \$984,980.7 on average (*t* = -3.18, *p* = 0.00192), suggesting potential challenges in sustaining growth as the pandemic subsided and market dynamics normalized. These findings demonstrate the esports industry’s adaptability during the pandemic but also highlight the importance of addressing post-pandemic challenges to ensure continued growth.
+### **Paired T-Test Results: Year-over-Year Changes in Esports Earnings (2018–2021)**
+
+The paired t-test results reveal significant year-over-year changes in esports earnings between 2018 and 2021. Below are the key findings from the analysis:
+
+#### **2018 to 2019: Significant Increase**
+From 2018 to 2019, earnings increased significantly, with 2019 showing an average increase of **$545,207.8** compared to 2018 (*t = -3.37, p = 0.00104*). This growth indicates a steady expansion of the esports industry during this period, as the industry continued to attract more sponsorships, audiences, and competitive opportunities globally.
+
+#### **2019 to 2020: Decrease During COVID-19 Pandemic**
+During the initial year of the COVID-19 pandemic (2019 to 2020), earnings decreased by an average of **$772,820.2** (*t = 3.55, p = 0.00057*). Despite the increased popularity of online entertainment during lockdowns, the decline may be attributed to the disruption of large in-person events and delays in sponsorship commitments, which are crucial to the industry's revenue model.
+
+#### **2020 to 2021: Post-Pandemic Recovery**
+From 2020 to 2021, earnings increased significantly by an average of **$984,980.7** (*t = -3.18, p = 0.00192*). This rebound reflects the industry’s adaptation to post-pandemic conditions, with many events transitioning successfully to hybrid or online formats. However, the sharp increase also suggests potential challenges in sustaining growth as market dynamics normalized and traditional sports began to reclaim audience attention.
+
 
 ```{r}
 # Pivot the paired_data to a long format
@@ -156,14 +168,6 @@ The boxplot and paired t-test results reveal key insights into the year-over-yea
 - For all years, the **mean** is likely higher than the **median**, as shown by the longer whiskers and outliers above the box.
 - The paired t-tests measure the differences in **mean earnings**, which are heavily influenced by these extreme outliers, even though the median earnings may not change as significantly between years.
 
-#### **3. Year-to-Year Changes**
-The paired t-tests provide additional insights into the changes in mean earnings:
-- **2018 vs. 2019**:
-  - Earnings significantly increased (\(-545,207.8\), *p = 0.00104*), reflecting growth in the esports industry. However, the median earnings remained closer to the lower range, indicating that the increase was primarily driven by top performers.
-- **2019 vs. 2020**:
-  - Earnings surged dramatically (\(772,820.2\), *p = 0.00057*), likely due to the esports industry's rapid adaptation to the COVID-19 pandemic. Online tournaments and increased viewership boosted top performers, while smaller contributors saw little or no growth.
-- **2020 vs. 2021**:
-  - Earnings significantly dropped (\(-984,980.7\), *p = 0.00192*), likely reflecting a normalization in the industry as the pandemic-driven surge faded, and attention shifted back to traditional sports and events.
 
 ## 2.1 Data Cleaning and Feature Engineering for regression
 

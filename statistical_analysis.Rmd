@@ -159,12 +159,12 @@ plot_ly(
 
 The boxplot and paired t-test results reveal key insights into the year-over-year changes in esports earnings between 2018 and 2021. Below are the main observations and interpretations:
 
-#### **1. Earnings Distribution: Not Symmetric**
+#### ** Earnings Distribution: Not Symmetric**
 - The boxplot indicates that earnings distributions for all years are **not symmetric**.
 - Extreme outliers above the boxplots highlight that a few countries or organizations have disproportionately higher earnings compared to the majority.
 - This asymmetry suggests a **skewed distribution**, where most countries earn relatively low amounts, while a small number achieve exceptionally high earnings.
 
-#### **2. Mean vs. Median**
+#### ** Mean vs. Median**
 - For all years, the **mean** is likely higher than the **median**, as shown by the longer whiskers and outliers above the box.
 - The paired t-tests measure the differences in **mean earnings**, which are heavily influenced by these extreme outliers, even though the median earnings may not change as significantly between years.
 

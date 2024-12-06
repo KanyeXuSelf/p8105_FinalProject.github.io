@@ -14,7 +14,7 @@ navbar:
     - icon: fa-envelope fa-lg
       href: mailto:<kx2224@cumc.columbia.edu>
     - icon: fa-github fa-lg
-      href: http://github.com/KanyeXuSelf/
+      href: https://github.com/KanyeXuSelf/p8105_FinalProject.github.io
 
       
   padding: 0.5rem 1rem;

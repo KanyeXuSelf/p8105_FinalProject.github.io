@@ -102,7 +102,7 @@ top_countries_long <- top_countries %>%
 head(top_countries_long)
 ```
 
-This bar chart compares the total earnings (yellow) and earnings from the top game (red) for the top 10 countries in e-sports from the top-performing game in each country.
+This bar chart compares the total earnings and earnings from the top game for the top 10 countries in e-sports from the top-performing game in each country.
 
 ```{r}
 

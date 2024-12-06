@@ -338,7 +338,7 @@ div.tocify {
   </a>
 </li>
 <li>
-  <a href="http://github.com/KanyeXuSelf/">
+  <a href="https://github.com/KanyeXuSelf/p8105_FinalProject.github.io">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -455,15 +455,15 @@ head(top_countries_long)</code></pre>
 <pre><code>## # A tibble: 6 × 5
 ##   Country       Top_Game          Earnings_Type       Earnings Game_Label       
 ##   &lt;chr&gt;         &lt;chr&gt;             &lt;chr&gt;                  &lt;dbl&gt; &lt;chr&gt;            
-## 1 China         Dota 2            Total Earnings    319027144. &lt;NA&gt;             
+## 1 China         Dota 2            Total Earnings    319040353. &lt;NA&gt;             
 ## 2 China         Dota 2            Top Game Earnings  85737773. Dota 2           
-## 3 United States Fortnite          Total Earnings    287370077. &lt;NA&gt;             
+## 3 United States Fortnite          Total Earnings    287370129. &lt;NA&gt;             
 ## 4 United States Fortnite          Top Game Earnings  49472180. Fortnite         
-## 5 Korea         League of Legends Total Earnings    151431685. &lt;NA&gt;             
-## 6 Korea         League of Legends Top Game Earnings  38839897. League of Legends</code></pre>
-<p>This bar chart compares the total earnings (yellow) and earnings from
-the top game (red) for the top 10 countries in e-sports from the
-top-performing game in each country.</p>
+## 5 Korea         League of Legends Total Earnings    151432848. &lt;NA&gt;             
+## 6 Korea         League of Legends Top Game Earnings  38841060. League of Legends</code></pre>
+<p>This bar chart compares the total earnings and earnings from the top
+game for the top 10 countries in e-sports from the top-performing game
+in each country.</p>
 <pre class="r"><code>ggplot(top_countries_long, aes(x = reorder(Country, -Earnings), y = Earnings, fill = Earnings_Type)) +
   geom_bar(stat = &quot;identity&quot;, position = &quot;identity&quot;, alpha = 0.9) +
   geom_text(
@@ -601,7 +601,7 @@ kable(
 <tr class="odd">
 <td align="left">China</td>
 <td align="right">136</td>
-<td align="right">31168889.3</td>
+<td align="right">31177444.3</td>
 </tr>
 <tr class="even">
 <td align="left">United States</td>
@@ -816,7 +816,7 @@ head(yearly_earnings)</code></pre>
 ## 3  2020     144918094.
 ## 4  2021     255439856.
 ## 5  2022     239756324.
-## 6  2023     229117554.</code></pre>
+## 6  2023     229122966.</code></pre>
 <pre class="r"><code># Plot the trend line
 ggplot(yearly_earnings, aes(x = Year, y = Total_Earnings)) +
   geom_line(color = &quot;#ADD8E6&quot;, size = 1) +
